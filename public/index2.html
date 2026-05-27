@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NeuroFlow CRM — AI Operating System for Freelancers</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg-primary: #080B14;
+    --bg-secondary: #0D1117;
+    --bg-card: #111827;
+    --bg-glass: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.06);
+    --border-glow: rgba(99,102,241,0.3);
+    --accent: #6366F1;
+    --accent2: #8B5CF6;
+    --accent3: #06B6D4;
+    --green: #10B981;
+    --red: #EF4444;
+    --yellow: #F59E0B;
+    --pink: #EC4899;
+    --text-primary: #F1F5F9;
+    --text-secondary: #94A3B8;
+    --text-muted: #475569;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 2px; }
+
+  .glass {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .glass-strong {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .glow-indigo { box-shadow: 0 0 30px rgba(99,102,241,0.15); }
+  .glow-cyan { box-shadow: 0 0 30px rgba(6,182,212,0.15); }
+  .glow-green { box-shadow: 0 0 30px rgba(16,185,129,0.15); }
+  .glow-purple { box-shadow: 0 0 30px rgba(139,92,246,0.15); }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #6366F1, #8B5CF6, #06B6D4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-bg {
+    background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  }
+
+  .gradient-bg-2 {
+    background: linear-gradient(135deg, #06B6D4, #6366F1);
+  }
+
+  .card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .card-hover:hover {
+    transform: translateY(-2px);
+    border-color: rgba(99,102,241,0.3);
+    box-shadow: 0 8px 32px rgba(99,102,241,0.12);
+  }
+
+  .nav-item {
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  .nav-item:hover { background: rgba(99,102,241,0.08); color: #fff; }
+  .nav-item.active {
+    background: rgba(99,102,241,0.15);
+    color: #6366F1;
+    border-left: 2px solid #6366F1;
+  }
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 100%;
+    background: linear-gradient(90deg, rgba(99,102,241,0.1), transparent);
+  }
+
+  .pulse-dot {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .float {
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .spin-slow {
+    animation: spin 8s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .progress-bar {
+    background: linear-gradient(90deg, #6366F1, #8B5CF6);
+    border-radius: 99px;
+    transition: width 1s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: slide 2s infinite;
+  }
+  @keyframes slide {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+
+  .kanban-col { min-height: 300px; }
+
+  .notification-item {
+    transition: all 0.2s ease;
+  }
+  .notification-item:hover {
+    background: rgba(99,102,241,0.05);
+    transform: translateX(4px);
+  }
+
+  .ai-message {
+    animation: fadeInUp 0.3s ease;
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .streak-fire {
+    animation: flicker 1.5s ease-in-out infinite;
+  }
+  @keyframes flicker {
+    0%, 100% { transform: scale(1) rotate(-3deg); }
+    50% { transform: scale(1.1) rotate(3deg); }
+  }
+
+  .tab-active {
+    background: rgba(99,102,241,0.15);
+    color: #6366F1;
+    border-bottom: 2px solid #6366F1;
+  }
+
+  .chart-container { position: relative; height: 180px; }
+
+  input, textarea, select {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #F1F5F9;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: 'Inter', sans-serif;
+    width: 100%;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: rgba(99,102,241,0.5);
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+  }
+  select option { background: #1E293B; }
+
+  button { cursor: pointer; font-family: 'Inter', sans-serif; }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #6366F1, #8B5CF6);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .btn-ghost:hover {
+    background: rgba(255,255,255,0.05);
+    color: white;
+  }
+
+  .status-hot { color: #EF4444; background: rgba(239,68,68,0.1); }
+  .status-warm { color: #F59E0B; background: rgba(245,158,11,0.1); }
+  .status-cold { color: #06B6D4; background: rgba(6,182,212,0.1); }
+  .status-closed { color: #10B981; background: rgba(16,185,129,0.1); }
+  .status-ghost { color: #94A3B8; background: rgba(148,163,184,0.1); }
+
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); position: fixed; z-index: 50; }
+    .sidebar.open { transform: translateX(0); }
+    .main-content { margin-left: 0 !important; }
+  }
+
+  .grid-cols-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .tooltip {
+    position: relative;
+  }
+  .tooltip::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1E293B;
+    color: #F1F5F9;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    margin-bottom: 4px;
+  }
+  .tooltip:hover::after { opacity: 1; }
+
+  .ceo-card {
+    background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.05));
+    border: 1px solid rgba(99,102,241,0.2);
+  }
+
+  .achievement-badge {
+    transition: all 0.3s ease;
+  }
+  .achievement-badge:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .typing-cursor::after {
+    content: '|';
+    animation: blink 1s infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ─── DATA ───────────────────────────────────────────────────────────────────
+
+const MOCK_LEADS = [
+  { id:1, name:"Alex Morgan", platform:"LinkedIn", niche:"SaaS Founder", company:"CloudStack AI", revenue:"$2M-5M", status:"hot", lastContacted:"2026-05-23", nextFollowUp:"2026-05-26", notes:"Very interested in automation suite", painPoints:"Manual onboarding, churn rate", offer:"AI Onboarding System", probability:82, tags:["High Ticket","SaaS Founder"], avatar:"AM" },
+  { id:2, name:"Sarah Chen", platform:"Instagram", niche:"Coach", company:"Elevate Coaching", revenue:"$500K-2M", status:"warm", lastContacted:"2026-05-22", nextFollowUp:"2026-05-27", notes:"Loved the reel about AI agents", painPoints:"Content creation, lead gen", offer:"AI Content Engine", probability:61, tags:["Coach","Creator"], avatar:"SC" },
+  { id:3, name:"Marcus Williams", platform:"LinkedIn", niche:"Agency", company:"Growth Lab Agency", revenue:"$1M-3M", status:"warm", lastContacted:"2026-05-20", nextFollowUp:"2026-05-25", notes:"Replied to DM, wants a call next week", painPoints:"Client reporting, scaling", offer:"AI Agency OS", probability:55, tags:["Agency","High Ticket"], avatar:"MW" },
+  { id:4, name:"Priya Sharma", platform:"LinkedIn", niche:"SaaS Founder", company:"DataPulse", revenue:"$5M+", status:"hot", lastContacted:"2026-05-24", nextFollowUp:"2026-05-26", notes:"Discovery call booked for Friday", painPoints:"Sales automation, pipeline", offer:"Full AI CRM Build", probability:78, tags:["High Ticket","SaaS Founder"], avatar:"PS" },
+  { id:5, name:"Jake Torres", platform:"Instagram", niche:"Creator", company:"TorresMedia", revenue:"$200K-500K", status:"cold", lastContacted:"2026-05-15", nextFollowUp:"2026-05-28", notes:"Seen story, no reply yet", painPoints:"Monetization, brand deals", offer:"AI Outreach Bot", probability:22, tags:["Creator"], avatar:"JT" },
+  { id:6, name:"Diana Ross", platform:"LinkedIn", niche:"Consultant", company:"Apex Consulting", revenue:"$1M-3M", status:"closed", lastContacted:"2026-05-10", nextFollowUp:null, notes:"Signed contract. AI ops project live.", painPoints:"Process automation", offer:"AI Operations Suite", probability:100, tags:["Agency","High Ticket"], avatar:"DR" },
+  { id:7, name:"Kevin Park", platform:"LinkedIn", niche:"SaaS Founder", company:"Nexus SaaS", revenue:"$500K-2M", status:"ghost", lastContacted:"2026-05-08", nextFollowUp:"2026-05-26", notes:"3 DMs, no reply. Try voice note.", painPoints:"Unknown", offer:"AI Lead Gen System", probability:12, tags:["SaaS Founder"], avatar:"KP" },
+  { id:8, name:"Lena Brooks", platform:"Instagram", niche:"Coach", company:"MindsetPro", revenue:"$200K-500K", status:"warm", lastContacted:"2026-05-21", nextFollowUp:"2026-05-27", notes:"Replied to story, asked about pricing", painPoints:"Client management, funnels", offer:"AI Coaching OS", probability:48, tags:["Coach"], avatar:"LB" },
+];
+
+const MOCK_PROJECTS = [
+  { id:1, name:"AI Onboarding System", client:"CloudStack AI", status:"active", progress:72, deadline:"2026-06-15", daysLeft:21, priority:"high", payment:"$4,800", paymentStatus:"partial", milestones:["Discovery ✓","Architecture ✓","Build","QA","Deploy"], risk:"low", tasks:["Build user onboarding flow","Integrate with CRM","Test AI triggers","Deploy on production"] },
+  { id:2, name:"Content Engine Build", client:"MindsetPro", status:"active", progress:38, deadline:"2026-06-30", daysLeft:36, priority:"medium", payment:"$2,200", paymentStatus:"unpaid", milestones:["Discovery ✓","Architecture","Build","QA","Deploy"], risk:"medium", tasks:["Map content workflow","Build AI writing modules","Connect to socials","Review & launch"] },
+  { id:3, name:"AI Agency OS", client:"Growth Lab Agency", status:"pending", progress:5, deadline:"2026-07-10", daysLeft:46, priority:"low", payment:"$6,500", paymentStatus:"unpaid", milestones:["Discovery","Architecture","Build","QA","Deploy"], risk:"low", tasks:["Kick-off call","Requirements doc","System design"] },
+  { id:4, name:"CRM Automation Suite", client:"Apex Consulting", status:"completed", progress:100, deadline:"2026-05-10", daysLeft:0, priority:"high", payment:"$3,200", paymentStatus:"paid", milestones:["Discovery ✓","Architecture ✓","Build ✓","QA ✓","Deploy ✓"], risk:"none", tasks:[] },
+];
+
+const MOCK_FOLLOWUPS = [
+  { id:1, lead:"Alex Morgan", platform:"LinkedIn", type:"Voice Note", date:"2026-05-26", priority:"high", status:"upcoming", message:"Follow up on AI onboarding demo", streak:3 },
+  { id:2, lead:"Priya Sharma", platform:"LinkedIn", type:"DM", date:"2026-05-26", priority:"high", status:"upcoming", message:"Confirm Friday discovery call time", streak:2 },
+  { id:3, lead:"Marcus Williams", platform:"LinkedIn", type:"Email", date:"2026-05-25", priority:"medium", status:"overdue", message:"Send case study + pricing deck", streak:1 },
+  { id:4, lead:"Kevin Park", platform:"LinkedIn", type:"Voice Note", date:"2026-05-25", priority:"high", status:"overdue", message:"3rd attempt — try different angle", streak:0 },
+  { id:5, lead:"Sarah Chen", platform:"Instagram", type:"DM", date:"2026-05-27", priority:"medium", status:"upcoming", message:"Share AI reel + soft pitch", streak:2 },
+  { id:6, lead:"Lena Brooks", platform:"Instagram", type:"DM", date:"2026-05-27", priority:"medium", status:"upcoming", message:"Send pricing & book discovery call", streak:1 },
+  { id:7, lead:"Jake Torres", platform:"Instagram", type:"Story Reply", date:"2026-05-28", priority:"low", status:"upcoming", message:"Engage with latest post first", streak:0 },
+];
+
+const MOCK_NOTIFICATIONS = [
+  { id:1, type:"hot_lead", icon:"🔥", title:"Hot Lead Alert", message:"Priya Sharma just viewed your profile 3 times", time:"2 min ago", read:false },
+  { id:2, type:"followup", icon:"⏰", title:"Overdue Follow-Up", message:"Marcus Williams follow-up is 2 days overdue", time:"15 min ago", read:false },
+  { id:3, type:"revenue", icon:"💰", title:"Revenue Milestone", message:"You've hit $15K in revenue this month! 🎉", time:"1 hr ago", read:false },
+  { id:4, type:"ai", icon:"🤖", title:"AI Recommendation", message:"Best time to DM SaaS founders today: 3-5 PM", time:"2 hr ago", read:true },
+  { id:5, type:"project", icon:"📦", title:"Project Deadline", message:"AI Onboarding System is 72% done — 21 days left", time:"3 hr ago", read:true },
+  { id:6, type:"missed", icon:"⚠️", title:"Missed Opportunity", message:"Kevin Park liked a competitor's post. Act fast!", time:"5 hr ago", read:true },
+  { id:7, type:"ai", icon:"✨", title:"Pipeline Health", message:"Your LinkedIn conversion rate improved 12% this week", time:"6 hr ago", read:true },
+];
+
+const AI_RESPONSES = [
+  "Based on your current pipeline, **Priya Sharma** and **Alex Morgan** are your highest-value leads. I recommend prioritizing discovery calls with both this week — combined potential revenue: **$7,000+**.",
+  "Your LinkedIn outreach has a **23% reply rate**, which is above the 15% industry average. The sweet spot for DMs seems to be Tuesday–Thursday, 9–11 AM. I'd suggest testing voice notes for ghosted leads like Kevin Park.",
+  "Revenue forecast for June: **$8,200–$11,400** based on current pipeline probability scores. To hit $10K, you need to close at least 1 of your 3 warm leads.",
+  "Your biggest bottleneck is the **Discovery → Proposal** stage. 40% of leads drop off here. Try sending a video proposal instead of a PDF — this could increase conversion by 25–35%.",
+  "I analyzed your outreach copy. Your Instagram DMs convert 18% better when you reference a specific pain point in the first line. Your LinkedIn messages perform best when under 80 words.",
+  "**CEO Mode Insight:** You're leaving ~$3,200/month on the table by not offering a maintenance retainer after project delivery. I'd recommend adding a $400–800/month retainer offer to all closed clients.",
+  "Your top-performing lead source is **LinkedIn SaaS Founders** with 67% warm rate. Consider doubling down on this niche — search for Series A founders actively posting about operations or scaling challenges.",
+];
+
+const ICONS = {
+  dashboard: "⬡",
+  linkedin: "in",
+  instagram: "◈",
+  leads: "◎",
+  projects: "▦",
+  followups: "◷",
+  revenue: "◈",
+  aiagent: "✦",
+  notifications: "◉",
+  settings: "⚙",
+};
+
+// ─── UTILITY COMPONENTS ─────────────────────────────────────────────────────
+
+const Avatar = ({ initials, size = 32, color = "#6366F1" }) => {
+  const colors = { A:"#6366F1", B:"#8B5CF6", C:"#06B6D4", D:"#10B981", E:"#F59E0B", F:"#EC4899", G:"#EF4444", H:"#6366F1", I:"#8B5CF6", J:"#06B6D4", K:"#10B981", L:"#F59E0B", M:"#EC4899", N:"#EF4444", P:"#6366F1", S:"#8B5CF6" };
+  const bg = colors[initials?.[0]] || "#6366F1";
+  return (
+    <div style={{ width:size, height:size, borderRadius:"50%", background:`linear-gradient(135deg, ${bg}, ${bg}88)`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:size*0.35, fontWeight:700, color:"white", flexShrink:0, border:"1px solid rgba(255,255,255,0.1)" }}>
+      {initials}
+    </div>
+  );
+};
+
+const StatBadge = ({ value, color = "#10B981" }) => (
+  <span style={{ color, fontSize:11, fontWeight:600 }}>{value > 0 ? `+${value}%` : `${value}%`} ↑</span>
+);
+
+const StatusBadge = ({ status }) => {
+  const map = { hot:["🔥 Hot","status-hot"], warm:["🌡 Warm","status-warm"], cold:["❄ Cold","status-cold"], closed:["✓ Closed","status-closed"], ghost:["👻 Ghost","status-ghost"] };
+  const [label, cls] = map[status] || ["Unknown","status-cold"];
+  return <span className={`badge ${cls}`}>{label}</span>;
+};
+
+const ProgressBar = ({ value, color = "linear-gradient(90deg, #6366F1, #8B5CF6)", height = 6 }) => (
+  <div style={{ background:"rgba(255,255,255,0.06)", borderRadius:99, height, overflow:"hidden" }}>
+    <div style={{ width:`${value}%`, height:"100%", background:color, borderRadius:99, transition:"width 1s ease" }} />
+  </div>
+);
+
+const MiniChart = ({ data, color = "#6366F1", id }) => {
+  const canvasRef = useRef();
+  const chartRef = useRef();
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (chartRef.current) chartRef.current.destroy();
+    const ctx = canvasRef.current.getContext("2d");
+    chartRef.current = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: data.map((_,i)=>i),
+        datasets: [{ data, borderColor: color, borderWidth: 2, fill: true, backgroundColor: `${color}15`, tension: 0.4, pointRadius: 0 }]
+      },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},tooltip:{enabled:false}}, scales:{x:{display:false},y:{display:false}} }
+    });
+    return () => chartRef.current?.destroy();
+  }, []);
+  return <canvas ref={canvasRef} style={{ height:48 }} />;
+};
+
+// ─── SIDEBAR ────────────────────────────────────────────────────────────────
+
+const Sidebar = ({ active, setActive, sidebarOpen }) => {
+  const navItems = [
+    { id:"dashboard", label:"Dashboard", icon:"⬡", badge:null },
+    { id:"linkedin", label:"LinkedIn CRM", icon:"🔗", badge:"24" },
+    { id:"instagram", label:"Instagram CRM", icon:"📱", badge:"8" },
+    { id:"leads", label:"Leads", icon:"◎", badge:"8" },
+    { id:"projects", label:"Projects", icon:"▦", badge:"3" },
+    { id:"followups", label:"Follow Ups", icon:"⏰", badge:"2", alert:true },
+    { id:"revenue", label:"Revenue", icon:"💰", badge:null },
+    { id:"aiagent", label:"AI Agent", icon:"✦", badge:null },
+    { id:"notifications", label:"Notifications", icon:"◉", badge:"3", alert:true },
+    { id:"settings", label:"Settings", icon:"⚙", badge:null },
+  ];
+
+  return (
+    <div className="sidebar" style={{
+      width:220, minHeight:"100vh", position:"fixed", top:0, left:0, zIndex:40,
+      background:"rgba(8,11,20,0.95)", backdropFilter:"blur(20px)",
+      borderRight:"1px solid rgba(255,255,255,0.05)", display:"flex", flexDirection:"column",
+      transition:"transform 0.3s ease",
+      transform: sidebarOpen ? "translateX(0)" : undefined
+    }}>
+      {/* Logo */}
+      <div style={{ padding:"20px 16px 16px", borderBottom:"1px solid rgba(255,255,255,0.05)" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+          <div style={{ width:34, height:34, borderRadius:10, background:"linear-gradient(135deg, #6366F1, #8B5CF6)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, boxShadow:"0 0 20px rgba(99,102,241,0.4)" }}>✦</div>
+          <div>
+            <div style={{ fontWeight:800, fontSize:14, letterSpacing:"-0.02em" }}>NeuroFlow</div>
+            <div style={{ fontSize:10, color:"#6366F1", fontWeight:600, letterSpacing:"0.08em" }}>CRM · AI OS</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Nav */}
+      <nav style={{ flex:1, padding:"12px 8px", overflowY:"auto" }}>
+        <div style={{ fontSize:9, fontWeight:700, color:"#334155", letterSpacing:"0.12em", padding:"8px 8px 4px", textTransform:"uppercase" }}>Main</div>
+        {navItems.slice(0,8).map(item => (
+          <div key={item.id} className={`nav-item ${active===item.id?"active":""}`}
+            onClick={() => setActive(item.id)}
+            style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 10px", borderRadius:8, margin:"2px 0", cursor:"pointer", color: active===item.id?"#6366F1":"#94A3B8", fontSize:13, fontWeight:500, userSelect:"none", borderLeft: active===item.id?"2px solid #6366F1":"2px solid transparent" }}>
+            <span style={{ fontSize:14, width:20, textAlign:"center" }}>{item.icon}</span>
+            <span style={{ flex:1 }}>{item.label}</span>
+            {item.badge && (
+              <span style={{ fontSize:10, fontWeight:700, padding:"1px 6px", borderRadius:99, background: item.alert?"rgba(239,68,68,0.15)":"rgba(99,102,241,0.15)", color: item.alert?"#EF4444":"#6366F1" }}>
+                {item.badge}
+              </span>
+            )}
+          </div>
+        ))}
+        <div style={{ fontSize:9, fontWeight:700, color:"#334155", letterSpacing:"0.12em", padding:"12px 8px 4px", textTransform:"uppercase" }}>System</div>
+        {navItems.slice(8).map(item => (
+          <div key={item.id} className={`nav-item ${active===item.id?"active":""}`}
+            onClick={() => setActive(item.id)}
+            style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 10px", borderRadius:8, margin:"2px 0", cursor:"pointer", color: active===item.id?"#6366F1":"#94A3B8", fontSize:13, fontWeight:500, userSelect:"none", borderLeft: active===item.id?"2px solid #6366F1":"2px solid transparent" }}>
+            <span style={{ fontSize:14, width:20, textAlign:"center" }}>{item.icon}</span>
+            <span style={{ flex:1 }}>{item.label}</span>
+            {item.badge && (
+              <span style={{ fontSize:10, fontWeight:700, padding:"1px 6px", borderRadius:99, background: item.alert?"rgba(239,68,68,0.15)":"rgba(99,102,241,0.15)", color: item.alert?"#EF4444":"#6366F1" }}>
+                {item.badge}
+              </span>
+            )}
+          </div>
+        ))}
+      </nav>
+
+      {/* User Card */}
+      <div style={{ padding:"12px 16px", borderTop:"1px solid rgba(255,255,255,0.05)" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:10, padding:"10px", borderRadius:10, background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.06)" }}>
+          <div style={{ width:32, height:32, borderRadius:"50%", background:"linear-gradient(135deg,#6366F1,#EC4899)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:700, color:"white" }}>A</div>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ fontSize:12, fontWeight:600, color:"#F1F5F9" }}>Alex Kumar</div>
+            <div style={{ fontSize:10, color:"#10B981" }}>● AI Freelancer</div>
+          </div>
+          <div style={{ fontSize:10, color:"#6366F1", cursor:"pointer" }}>⚙</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── TOP NAVBAR ─────────────────────────────────────────────────────────────
+
+const Navbar = ({ setActive, notifications, sidebarOpen, setSidebarOpen }) => {
+  const unread = notifications.filter(n => !n.read).length;
+  return (
+    <div style={{
+      position:"fixed", top:0, left:220, right:0, height:56, zIndex:30,
+      background:"rgba(8,11,20,0.85)", backdropFilter:"blur(20px)",
+      borderBottom:"1px solid rgba(255,255,255,0.05)",
+      display:"flex", alignItems:"center", padding:"0 20px", gap:12
+    }}>
+      {/* Mobile menu */}
+      <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ display:"none", background:"none", border:"none", color:"#94A3B8", fontSize:20, padding:4 }} className="mobile-menu">☰</button>
+
+      {/* Search */}
+      <div style={{ flex:1, maxWidth:380, position:"relative" }}>
+        <span style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", color:"#475569", fontSize:13 }}>⌕</span>
+        <input placeholder="Search leads, projects, clients..." style={{ paddingLeft:30, height:34, fontSize:12, borderRadius:8 }} />
+      </div>
+
+      <div style={{ flex:1 }} />
+
+      {/* Revenue pill */}
+      <div style={{ display:"flex", alignItems:"center", gap:8, padding:"6px 14px", borderRadius:99, background:"rgba(16,185,129,0.1)", border:"1px solid rgba(16,185,129,0.2)" }}>
+        <span style={{ color:"#10B981", fontSize:12, fontWeight:600 }}>💰 $15,200 MTD</span>
+        <StatBadge value={23} />
+      </div>
+
+      {/* AI quick */}
+      <button onClick={() => setActive("aiagent")} style={{ display:"flex", alignItems:"center", gap:6, padding:"6px 12px", borderRadius:8, background:"linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.15))", border:"1px solid rgba(99,102,241,0.25)", color:"#8B5CF6", fontSize:12, fontWeight:600 }}>
+        ✦ AI Agent
+      </button>
+
+      {/* Notifications */}
+      <button onClick={() => setActive("notifications")} style={{ position:"relative", background:"none", border:"1px solid rgba(255,255,255,0.08)", borderRadius:8, width:34, height:34, display:"flex", alignItems:"center", justifyContent:"center", color:"#94A3B8", fontSize:15 }}>
+        🔔
+        {unread > 0 && <span style={{ position:"absolute", top:-4, right:-4, width:16, height:16, borderRadius:"50%", background:"#EF4444", fontSize:9, fontWeight:700, color:"white", display:"flex", alignItems:"center", justifyContent:"center" }}>{unread}</span>}
+      </button>
+
+      {/* Profile */}
+      <div style={{ width:34, height:34, borderRadius:"50%", background:"linear-gradient(135deg,#6366F1,#EC4899)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:700, color:"white", cursor:"pointer", border:"2px solid rgba(99,102,241,0.4)" }}>A</div>
+    </div>
+  );
+};
+
+// ─── DASHBOARD PAGE ─────────────────────────────────────────────────────────
+
+const StatCard = ({ label, value, icon, change, color = "#6366F1", sparkData }) => (
+  <div className="glass card-hover" style={{ borderRadius:12, padding:"14px 16px", border:"1px solid rgba(255,255,255,0.06)", position:"relative", overflow:"hidden" }}>
+    <div style={{ position:"absolute", top:-20, right:-20, width:80, height:80, borderRadius:"50%", background:color, opacity:0.06, filter:"blur(20px)" }} />
+    <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:8 }}>
+      <div style={{ fontSize:16 }}>{icon}</div>
+      <StatBadge value={change} color="#10B981" />
+    </div>
+    <div style={{ fontSize:22, fontWeight:800, color:"#F1F5F9", marginBottom:2 }}>{value}</div>
+    <div style={{ fontSize:11, color:"#475569", fontWeight:500 }}>{label}</div>
+    {sparkData && (
+      <div style={{ marginTop:8 }}>
+        <MiniChart data={sparkData} color={color} />
+      </div>
+    )}
+  </div>
+);
+
+const BigChart = ({ title, subtitle, id, type="line", labels, datasets, height=180 }) => {
+  const canvasRef = useRef();
+  const chartRef = useRef();
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    if (chartRef.current) chartRef.current.destroy();
+    const ctx = canvasRef.current.getContext("2d");
+    chartRef.current = new Chart(ctx, {
+      type,
+      data: { labels, datasets },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: datasets.length > 1, labels: { color:"#94A3B8", font:{size:11}, boxWidth:12, padding:16 } } },
+        scales: {
+          x: { grid:{color:"rgba(255,255,255,0.04)"}, ticks:{color:"#475569",font:{size:10}} },
+          y: { grid:{color:"rgba(255,255,255,0.04)"}, ticks:{color:"#475569",font:{size:10}} }
+        }
+      }
+    });
+    return () => chartRef.current?.destroy();
+  }, []);
+  return (
+    <div className="glass" style={{ borderRadius:14, padding:"18px 20px", border:"1px solid rgba(255,255,255,0.06)" }}>
+      <div style={{ marginBottom:14 }}>
+        <div style={{ fontSize:14, fontWeight:700, color:"#F1F5F9" }}>{title}</div>
+        {subtitle && <div style={{ fontSize:11, color:"#475569", marginTop:2 }}>{subtitle}</div>}
+      </div>
+      <div style={{ height }}>
+        <canvas ref={canvasRef} />
+      </div>
+    </div>
+  );
+};
+
+const Dashboard = ({ setActive }) => {
+  const stats = [
+    { label:"Total Leads", value:"8", icon:"◎", change:33, color:"#6366F1", spark:[3,4,4,5,6,7,7,8] },
+    { label:"Connection Requests", value:"142", icon:"🔗", change:18, color:"#8B5CF6", spark:[80,90,95,110,120,130,138,142] },
+    { label:"Accepted Connections", value:"89", icon:"✓", change:12, color:"#06B6D4", spark:[50,58,65,70,74,80,85,89] },
+    { label:"DMs Sent", value:"213", icon:"✉", change:27, color:"#EC4899", spark:[100,120,140,155,170,185,200,213] },
+    { label:"Replies Received", value:"67", icon:"💬", change:15, color:"#F59E0B", spark:[30,35,42,48,52,58,63,67] },
+    { label:"Calls Booked", value:"12", icon:"📞", change:50, color:"#10B981", spark:[4,5,6,7,8,9,11,12] },
+    { label:"Clients Closed", value:"4", icon:"🏆", change:33, color:"#6366F1", spark:[1,1,2,2,3,3,4,4] },
+    { label:"Revenue Generated", value:"$15.2K", icon:"💰", change:23, color:"#10B981", spark:[5000,7000,9000,10500,12000,13500,14500,15200] },
+    { label:"Active Projects", value:"3", icon:"▦", change:0, color:"#8B5CF6", spark:[1,1,2,2,2,3,3,3] },
+    { label:"Pending Follow Ups", value:"7", icon:"⏰", change:-12, color:"#F59E0B", spark:[10,9,9,8,8,7,7,7] },
+  ];
+
+  const weeklyLeads = {
+    labels:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+    datasets:[{
+      label:"New Leads", data:[1,2,1,3,2,1,2],
+      borderColor:"#6366F1", backgroundColor:"rgba(99,102,241,0.1)",
+      fill:true, tension:0.4, pointRadius:4, pointBackgroundColor:"#6366F1"
+    }]
+  };
+
+  const revenueData = {
+    labels:["Jan","Feb","Mar","Apr","May"],
+    datasets:[{
+      label:"Revenue ($)", data:[3200,5800,8100,11400,15200],
+      borderColor:"#10B981", backgroundColor:"rgba(16,185,129,0.1)",
+      fill:true, tension:0.4, pointRadius:4, pointBackgroundColor:"#10B981"
+    }]
+  };
+
+  const platformData = {
+    labels:["Leads","DMs","Replies","Calls","Closed"],
+    datasets:[
+      { label:"LinkedIn", data:[60,130,40,8,3], backgroundColor:"rgba(99,102,241,0.7)", borderRadius:4 },
+      { label:"Instagram", data:[40,83,27,4,1], backgroundColor:"rgba(6,182,212,0.7)", borderRadius:4 },
+    ]
+  };
+
+  const funnelData = {
+    labels:["Contacted","Replied","Interested","Call Booked","Closed"],
+    datasets:[{ label:"Leads", data:[142,67,24,12,4], backgroundColor:["rgba(99,102,241,0.7)","rgba(139,92,246,0.7)","rgba(6,182,212,0.7)","rgba(16,185,129,0.7)","rgba(16,185,129,0.9)"], borderRadius:6 }]
+  };
+
+  const quickActions = [
+    { label:"Add Lead", icon:"+", color:"#6366F1", action:() => setActive("leads") },
+    { label:"Schedule Follow Up", icon:"⏰", color:"#F59E0B", action:() => setActive("followups") },
+    { label:"Generate AI Message", icon:"✦", color:"#8B5CF6", action:() => setActive("aiagent") },
+    { label:"Create Proposal", icon:"📋", color:"#06B6D4", action:() => {} },
+    { label:"Analyze Pipeline", icon:"◎", color:"#10B981", action:() => setActive("aiagent") },
+  ];
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{ marginBottom:24 }}>
+        <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", flexWrap:"wrap", gap:12 }}>
+          <div>
+            <div style={{ fontSize:22, fontWeight:800, marginBottom:4 }}>Good morning, Alex 👋</div>
+            <div style={{ fontSize:13, color:"#475569" }}>Monday, May 25, 2026 · Your pipeline is healthy — 2 hot leads need attention today.</div>
+          </div>
+          <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+            {quickActions.map(a => (
+              <button key={a.label} onClick={a.action} style={{ display:"flex", alignItems:"center", gap:6, padding:"7px 14px", borderRadius:8, background:`rgba(${a.color==="#6366F1"?"99,102,241":a.color==="#F59E0B"?"245,158,11":a.color==="#8B5CF6"?"139,92,246":a.color==="#06B6D4"?"6,182,212":"16,185,129"},0.12)`, border:`1px solid ${a.color}33`, color:a.color, fontSize:12, fontWeight:600, whiteSpace:"nowrap" }}>
+                <span>{a.icon}</span>{a.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Streak + Productivity */}
+      <div style={{ display:"flex", gap:12, marginBottom:20, flexWrap:"wrap" }}>
+        <div className="glass" style={{ borderRadius:12, padding:"12px 18px", border:"1px solid rgba(245,158,11,0.2)", display:"flex", alignItems:"center", gap:12, flex:"0 0 auto" }}>
+          <span className="streak-fire" style={{ fontSize:24 }}>🔥</span>
+          <div>
+            <div style={{ fontSize:18, fontWeight:800, color:"#F59E0B" }}>14-Day</div>
+            <div style={{ fontSize:11, color:"#475569" }}>Outreach Streak</div>
+          </div>
+        </div>
+        <div className="glass" style={{ borderRadius:12, padding:"12px 18px", border:"1px solid rgba(99,102,241,0.2)", display:"flex", alignItems:"center", gap:12, flex:"0 0 auto" }}>
+          <span style={{ fontSize:24 }}>🧠</span>
+          <div>
+            <div style={{ fontSize:18, fontWeight:800, color:"#6366F1" }}>87/100</div>
+            <div style={{ fontSize:11, color:"#475569" }}>Productivity Score</div>
+          </div>
+        </div>
+        <div className="glass" style={{ borderRadius:12, padding:"12px 18px", border:"1px solid rgba(16,185,129,0.2)", display:"flex", alignItems:"center", gap:12, flex:"0 0 auto" }}>
+          <span style={{ fontSize:24 }}>⭐</span>
+          <div>
+            <div style={{ fontSize:18, fontWeight:800, color:"#10B981" }}>94/100</div>
+            <div style={{ fontSize:11, color:"#475569" }}>AI Outreach Score</div>
+          </div>
+        </div>
+        <div className="glass" style={{ borderRadius:12, padding:"12px 18px", border:"1px solid rgba(139,92,246,0.2)", display:"flex", alignItems:"center", gap:12, flex:"0 0 auto" }}>
+          <span style={{ fontSize:24 }}>🏅</span>
+          <div>
+            <div style={{ fontSize:18, fontWeight:800, color:"#8B5CF6" }}>Top Performer</div>
+            <div style={{ fontSize:11, color:"#475569" }}>This Month Badge</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid-cols-stats" style={{ marginBottom:20 }}>
+        {stats.map(s => <StatCard key={s.label} {...s} sparkData={s.spark} />)}
+      </div>
+
+      {/* Charts Row */}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))", gap:14, marginBottom:20 }}>
+        <BigChart title="Weekly Lead Growth" subtitle="New leads by day" labels={weeklyLeads.labels} datasets={weeklyLeads.datasets} />
+        <BigChart title="Revenue Growth" subtitle="Monthly revenue trend" labels={revenueData.labels} datasets={revenueData.datasets} />
+        <BigChart title="Platform Comparison" subtitle="LinkedIn vs Instagram" type="bar" labels={platformData.labels} datasets={platformData.datasets} />
+        <BigChart title="Conversion Funnel" subtitle="Lead to close journey" type="bar" labels={funnelData.labels} datasets={funnelData.datasets} />
+      </div>
+
+      {/* Hot Leads Today */}
+      <div className="glass" style={{ borderRadius:14, padding:"18px 20px", border:"1px solid rgba(255,255,255,0.06)", marginBottom:20 }}>
+        <div style={{ fontSize:14, fontWeight:700, marginBottom:14, display:"flex", alignItems:"center", gap:8 }}>
+          🔥 Hot Leads — Action Required Today
+        </div>
+        <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+          {MOCK_LEADS.filter(l => l.status === "hot").map(lead => (
+            <div key={lead.id} className="card-hover" style={{ display:"flex", alignItems:"center", gap:14, padding:"12px 14px", borderRadius:10, background:"rgba(239,68,68,0.05)", border:"1px solid rgba(239,68,68,0.15)" }}>
+              <Avatar initials={lead.avatar} size={38} />
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:13, fontWeight:600 }}>{lead.name}</div>
+                <div style={{ fontSize:11, color:"#475569" }}>{lead.company} · {lead.niche}</div>
+              </div>
+              <div style={{ textAlign:"right" }}>
+                <div style={{ fontSize:12, fontWeight:700, color:"#6366F1" }}>{lead.probability}% close prob.</div>
+                <div style={{ fontSize:11, color:"#475569" }}>Next: {lead.nextFollowUp}</div>
+              </div>
+              <StatusBadge status={lead.status} />
+              <button className="btn-primary" style={{ padding:"6px 12px", fontSize:11 }}>Take Action →</button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── LINKEDIN CRM ────────────────────────────────────────────────────────────
+
+const LinkedInCRM = () => {
+  const [activeTab, setActiveTab] = useState("kanban");
+  const linkedinLeads = MOCK_LEADS.filter(l => l.platform === "LinkedIn");
+  const stages = [
+    { id:"prospect", label:"Prospect", color:"#6366F1", leads: linkedinLeads.filter(l=>l.status==="cold") },
+    { id:"contacted", label:"Contacted", color:"#F59E0B", leads: linkedinLeads.filter(l=>l.status==="warm") },
+    { id:"hot", label:"Hot Lead", color:"#EF4444", leads: linkedinLeads.filter(l=>l.status==="hot") },
+    { id:"closed", label:"Closed", color:"#10B981", leads: linkedinLeads.filter(l=>l.status==="closed"||l.status==="ghost") },
+  ];
+
+  const liStats = [
+    { label:"Total LI Leads", value:5, icon:"👥" },
+    { label:"Pending Requests", value:53, icon:"📤" },
+    { label:"Accepted", value:89, icon:"✓" },
+    { label:"DMs Sent", value:130, icon:"✉" },
+    { label:"Replies", value:40, icon:"💬" },
+    { label:"Warm Leads", value:2, icon:"🌡" },
+    { label:"Hot Leads", value:2, icon:"🔥" },
+    { label:"Ghosted", value:1, icon:"👻" },
+    { label:"Conversion Rate", value:"23%", icon:"📈" },
+  ];
+
+  return (
+    <div>
+      <div style={{ marginBottom:20 }}>
+        <div style={{ fontSize:22, fontWeight:800, marginBottom:4, display:"flex", alignItems:"center", gap:10 }}>
+          <span style={{ color:"#0A66C2", background:"rgba(10,102,194,0.15)", padding:"4px 10px", borderRadius:8, fontSize:14 }}>in</span>
+          LinkedIn CRM
+        </div>
+        <div style={{ fontSize:13, color:"#475569" }}>Manage all LinkedIn outreach, leads, and pipeline stages</div>
+      </div>
+
+      {/* Stats */}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))", gap:10, marginBottom:20 }}>
+        {liStats.map(s => (
+          <div key={s.label} className="glass card-hover" style={{ borderRadius:10, padding:"12px 14px", border:"1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ fontSize:18, marginBottom:6 }}>{s.icon}</div>
+            <div style={{ fontSize:18, fontWeight:800 }}>{s.value}</div>
+            <div style={{ fontSize:10, color:"#475569", marginTop:2 }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display:"flex", gap:0, marginBottom:20, borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
+        {["kanban","leads","timeline"].map(tab => (
+          <button key={tab} onClick={() => setActiveTab(tab)}
+            style={{ padding:"8px 18px", fontSize:12, fontWeight:600, background:"none", border:"none", color: activeTab===tab?"#6366F1":"#475569", borderBottom: activeTab===tab?"2px solid #6366F1":"2px solid transparent", marginBottom:-1, textTransform:"capitalize", transition:"all 0.2s" }}>
+            {tab === "kanban" ? "Kanban Board" : tab === "leads" ? "Lead Cards" : "Timeline"}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === "kanban" && (
+        <div style={{ display:"grid", gridTemplateColumns:`repeat(${stages.length},1fr)`, gap:12, overflowX:"auto" }}>
+          {stages.map(stage => (
+            <div key={stage.id} className="kanban-col" style={{ background:"rgba(255,255,255,0.02)", borderRadius:12, padding:"14px 12px", border:"1px solid rgba(255,255,255,0.05)" }}>
+              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                  <div style={{ width:8, height:8, borderRadius:"50%", background:stage.color }} />
+                  <span style={{ fontSize:12, fontWeight:700, color:stage.color }}>{stage.label}</span>
+                </div>
+                <span style={{ fontSize:11, color:"#475569", background:"rgba(255,255,255,0.06)", padding:"2px 8px", borderRadius:99 }}>{stage.leads.length}</span>
+              </div>
+              <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                {stage.leads.map(lead => (
+                  <div key={lead.id} className="card-hover" style={{ background:"rgba(255,255,255,0.03)", borderRadius:10, padding:"12px", border:"1px solid rgba(255,255,255,0.06)" }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
+                      <Avatar initials={lead.avatar} size={28} />
+                      <div>
+                        <div style={{ fontSize:12, fontWeight:600 }}>{lead.name}</div>
+                        <div style={{ fontSize:10, color:"#475569" }}>{lead.company}</div>
+                      </div>
+                    </div>
+                    <div style={{ display:"flex", flexWrap:"wrap", gap:4, marginBottom:8 }}>
+                      {lead.tags.map(t => (
+                        <span key={t} className="tag" style={{ background:"rgba(99,102,241,0.1)", color:"#8B5CF6", fontSize:9 }}>{t}</span>
+                      ))}
+                    </div>
+                    <ProgressBar value={lead.probability} height={4} />
+                    <div style={{ fontSize:10, color:"#475569", marginTop:4 }}>{lead.probability}% close probability</div>
+                    <div style={{ marginTop:8, padding:"6px 8px", borderRadius:6, background:"rgba(99,102,241,0.08)", fontSize:10, color:"#8B5CF6" }}>
+                      🤖 AI: {lead.probability > 70 ? "Book call NOW" : lead.probability > 40 ? "Send case study" : "Warm up with content"}
+                    </div>
+                  </div>
+                ))}
+                <button style={{ padding:"8px", borderRadius:8, background:"rgba(255,255,255,0.03)", border:"1px dashed rgba(255,255,255,0.1)", color:"#475569", fontSize:12, width:"100%" }}>+ Add Lead</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {activeTab === "leads" && (
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))", gap:14 }}>
+          {linkedinLeads.map(lead => (
+            <div key={lead.id} className="glass card-hover" style={{ borderRadius:14, padding:"18px", border:"1px solid rgba(255,255,255,0.06)" }}>
+              <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:14 }}>
+                <Avatar initials={lead.avatar} size={44} />
+                <div style={{ flex:1 }}>
+                  <div style={{ fontSize:14, fontWeight:700 }}>{lead.name}</div>
+                  <div style={{ fontSize:11, color:"#475569" }}>{lead.company}</div>
+                  <div style={{ fontSize:11, color:"#6366F1" }}>{lead.niche}</div>
+                </div>
+                <StatusBadge status={lead.status} />
+              </div>
+              <div style={{ display:"flex", flexWrap:"wrap", gap:4, marginBottom:12 }}>
+                {lead.tags.map(t => <span key={t} className="tag" style={{ background:"rgba(99,102,241,0.1)", color:"#8B5CF6" }}>{t}</span>)}
+              </div>
+              <div style={{ marginBottom:10 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", fontSize:11, color:"#475569", marginBottom:4 }}>
+                  <span>Close Probability</span><span style={{ color:"#6366F1", fontWeight:700 }}>{lead.probability}%</span>
+                </div>
+                <ProgressBar value={lead.probability} />
+              </div>
+              <div style={{ fontSize:11, color:"#475569", padding:"8px 10px", borderRadius:8, background:"rgba(255,255,255,0.03)", lineHeight:1.5 }}>
+                <div>💡 Pain: {lead.painPoints}</div>
+                <div>🎯 Offer: {lead.offer}</div>
+              </div>
+              <div style={{ display:"flex", gap:8, marginTop:12 }}>
+                <button className="btn-primary" style={{ flex:1, padding:"6px", fontSize:11 }}>View Profile</button>
+                <button className="btn-ghost" style={{ flex:1, padding:"6px", fontSize:11 }}>Send DM</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {activeTab === "timeline" && (
+        <div className="glass" style={{ borderRadius:14, padding:"20px", border:"1px solid rgba(255,255,255,0.06)" }}>
+          <div style={{ fontSize:13, fontWeight:700, marginBottom:16 }}>Lead Activity Timeline</div>
+          {linkedinLeads.map((lead, i) => (
+            <div key={lead.id} style={{ display:"flex", gap:14, marginBottom:i<linkedinLeads.length-1?20:0 }}>
+              <div style={{ display:"flex", flexDirection:"column", alignItems:"center" }}>
+                <Avatar initials={lead.avatar} size={32} />
+                {i < linkedinLeads.length-1 && <div style={{ width:1, flex:1, background:"rgba(255,255,255,0.06)", marginTop:6 }} />}
+              </div>
+              <div style={{ flex:1, paddingBottom: i<linkedinLeads.length-1?20:0 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:4 }}>
+                  <span style={{ fontSize:13, fontWeight:600 }}>{lead.name}</span>
+                  <StatusBadge status={lead.status} />
+                  <span style={{ fontSize:11, color:"#475569", marginLeft:"auto" }}>{lead.lastContacted}</span>
+                </div>
+                <div style={{ fontSize:12, color:"#64748B", marginBottom:4 }}>{lead.notes}</div>
+                <div style={{ fontSize:11, color:"#6366F1" }}>Next: {lead.nextFollowUp || "Closed"}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── INSTAGRAM CRM ───────────────────────────────────────────────────────────
+
+const InstagramCRM = () => {
+  const igLeads = MOCK_LEADS.filter(l => l.platform === "Instagram");
+  const [activeChat, setActiveChat] = useState(igLeads[0]);
+
+  const igStats = [
+    { label:"Contacted", value:83, icon:"📤", color:"#EC4899" },
+    { label:"DMs Sent", value:83, icon:"✉", color:"#8B5CF6" },
+    { label:"Replies", value:27, icon:"💬", color:"#06B6D4" },
+    { label:"Story Replies", value:14, icon:"◈", color:"#F59E0B" },
+    { label:"Qualified Leads", value:4, icon:"✓", color:"#10B981" },
+    { label:"Calls Booked", value:4, icon:"📞", color:"#6366F1" },
+    { label:"IG Revenue", value:"$3.8K", icon:"💰", color:"#10B981" },
+  ];
+
+  const mockChat = [
+    { from:"me", text:"Hey Sarah! Loved your recent post on mindset shifts for coaches — super relatable stuff! 👏", time:"May 22, 9:12 AM" },
+    { from:"lead", text:"Thank you so much! Really put my heart into that one 🙏", time:"May 22, 10:35 AM" },
+    { from:"me", text:"It shows! Quick question — are you currently using any AI tools for your client management? I help coaches build custom AI systems.", time:"May 22, 10:48 AM" },
+    { from:"lead", text:"Oh interesting! I've been thinking about that actually. What kind of systems?", time:"May 22, 11:02 AM" },
+    { from:"me", text:"Everything from automating client onboarding to AI-powered content engines. Happy to show you what I built for a similar coach — saved her 10 hrs/week!", time:"May 22, 11:15 AM" },
+    { from:"lead", text:"That sounds amazing! Can we hop on a quick call this week?", time:"May 22, 11:28 AM" },
+  ];
+
+  return (
+    <div>
+      <div style={{ marginBottom:20 }}>
+        <div style={{ fontSize:22, fontWeight:800, marginBottom:4, display:"flex", alignItems:"center", gap:10 }}>
+          <span style={{ background:"linear-gradient(135deg,#E1306C,#833AB4,#F56040)", padding:"4px 10px", borderRadius:8, fontSize:14, color:"white" }}>◈</span>
+          Instagram CRM
+        </div>
+        <div style={{ fontSize:13, color:"#475569" }}>Track DMs, story replies, creator outreach and IG-sourced revenue</div>
+      </div>
+
+      {/* Stats */}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))", gap:10, marginBottom:20 }}>
+        {igStats.map(s => (
+          <div key={s.label} className="glass card-hover" style={{ borderRadius:10, padding:"12px 14px", border:`1px solid ${s.color}22` }}>
+            <div style={{ fontSize:18, marginBottom:6 }}>{s.icon}</div>
+            <div style={{ fontSize:18, fontWeight:800, color:s.color }}>{s.value}</div>
+            <div style={{ fontSize:10, color:"#475569", marginTop:2 }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display:"grid", gridTemplateColumns:"280px 1fr", gap:14 }}>
+        {/* Lead List */}
+        <div className="glass" style={{ borderRadius:14, padding:"14px", border:"1px solid rgba(255,255,255,0.06)", height:"fit-content" }}>
+          <div style={{ fontSize:12, fontWeight:700, marginBottom:12, color:"#94A3B8" }}>IG LEADS</div>
+          {igLeads.map(lead => (
+            <div key={lead.id} onClick={() => setActiveChat(lead)}
+              className="notification-item"
+              style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 8px", borderRadius:8, cursor:"pointer", background: activeChat?.id===lead.id?"rgba(99,102,241,0.1)":"transparent", marginBottom:4 }}>
+              <div style={{ position:"relative" }}>
+                <Avatar initials={lead.avatar} size={36} />
+                <div style={{ position:"absolute", bottom:0, right:0, width:10, height:10, borderRadius:"50%", background: lead.status==="warm"||lead.status==="hot"?"#10B981":"#475569", border:"2px solid #080B14" }} />
+              </div>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontSize:12, fontWeight:600 }}>{lead.name}</div>
+                <div style={{ fontSize:10, color:"#475569", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.notes}</div>
+              </div>
+              <StatusBadge status={lead.status} />
+            </div>
+          ))}
+        </div>
+
+        {/* Chat Interface */}
+        {activeChat && (
+          <div className="glass" style={{ borderRadius:14, border:"1px solid rgba(255,255,255,0.06)", display:"flex", flexDirection:"column", height:480 }}>
+            <div style={{ padding:"14px 18px", borderBottom:"1px solid rgba(255,255,255,0.06)", display:"flex", alignItems:"center", gap:12 }}>
+              <Avatar initials={activeChat.avatar} size={36} />
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:13, fontWeight:700 }}>{activeChat.name}</div>
+                <div style={{ fontSize:11, color:"#475569" }}>{activeChat.niche} · {activeChat.company}</div>
+              </div>
+              <StatusBadge status={activeChat.status} />
+              <button className="btn-primary" style={{ padding:"5px 12px", fontSize:11 }}>Book Call</button>
+            </div>
+            <div style={{ flex:1, overflowY:"auto", padding:"16px 18px", display:"flex", flexDirection:"column", gap:10 }}>
+              {mockChat.map((msg, i) => (
+                <div key={i} className="ai-message" style={{ display:"flex", justifyContent: msg.from==="me"?"flex-end":"flex-start" }}>
+                  <div style={{ maxWidth:"72%", padding:"10px 14px", borderRadius: msg.from==="me"?"14px 14px 4px 14px":"14px 14px 14px 4px", background: msg.from==="me"?"linear-gradient(135deg,#6366F1,#8B5CF6)":"rgba(255,255,255,0.05)", fontSize:12, lineHeight:1.5, color:"#F1F5F9" }}>
+                    <div>{msg.text}</div>
+                    <div style={{ fontSize:10, color: msg.from==="me"?"rgba(255,255,255,0.5)":"#475569", marginTop:4 }}>{msg.time}</div>
+                  </div>
+                </div>
+              ))}
+              {/* AI Suggestion */}
+              <div style={{ padding:"10px 12px", borderRadius:10, background:"rgba(99,102,241,0.08)", border:"1px solid rgba(99,102,241,0.2)", fontSize:11, color:"#8B5CF6" }}>
+                ✦ <strong>AI Suggestion:</strong> Sarah is highly engaged. Send your booking link now and mention the 10-hr/week stat — it resonates with coaches.
+              </div>
+            </div>
+            <div style={{ padding:"12px 16px", borderTop:"1px solid rgba(255,255,255,0.06)", display:"flex", gap:8 }}>
+              <input placeholder="Type a message or ask AI to generate one..." style={{ flex:1 }} />
+              <button style={{ padding:"0 12px", background:"rgba(99,102,241,0.15)", border:"1px solid rgba(99,102,241,0.3)", borderRadius:8, color:"#8B5CF6", fontSize:11, fontWeight:600 }}>✦ AI</button>
+              <button className="btn-primary" style={{ padding:"0 14px" }}>Send</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ─── LEADS PAGE ──────────────────────────────────────────────────────────────
+
+const LeadsPage = () => {
+  const [view, setView] = useState("table");
+  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
+
+  const filtered = MOCK_LEADS.filter(l => {
+    if (filter !== "all" && l.status !== filter) return false;
+    if (search && !l.name.toLowerCase().includes(search.toLowerCase()) && !l.company.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+
+  return (
+    <div>
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20, flexWrap:"wrap", gap:12 }}>
+        <div>
+          <div style={{ fontSize:22, fontWeight:800, marginBottom:4 }}>Lead Database</div>
+          <div style={{ fontSize:13, color:"#475569" }}>{MOCK_LEADS.length} total leads across all platforms</div>
+        </div>
+        <button className="btn-primary" style={{ display:"flex", alignItems:"center", gap:6 }}>+ Add New Lead</button>
+      </div>
+
+      {/* Filters */}
+      <div style={{ display:"flex", gap:10, marginBottom:16, flexWrap:"wrap", alignItems:"center" }}>
+        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍 Search leads..." style={{ width:220, height:34 }} />
+        <div style={{ display:"flex", gap:4, background:"rgba(255,255,255,0.03)", borderRadius:8, padding:4, border:"1px solid rgba(255,255,255,0.06)" }}>
+          {["all","hot","warm","cold","closed","ghost"].map(f => (
+            <button key={f} onClick={() => setFilter(f)}
+              style={{ padding:"4px 12px", borderRadius:6, border:"none", background: filter===f?"linear-gradient(135deg,#6366F1,#8B5CF6)":"transparent", color: filter===f?"white":"#475569", fontSize:11, fontWeight:600, textTransform:"capitalize" }}>
+              {f}
+            </button>
+          ))}
+        </div>
+        <div style={{ marginLeft:"auto", display:"flex", gap:4 }}>
+          {["table","kanban","timeline"].map(v => (
+            <button key={v} onClick={() => setView(v)}
+              style={{ padding:"5px 12px", borderRadius:6, border:"1px solid rgba(255,255,255,0.06)", background: view===v?"rgba(99,102,241,0.15)":"transparent", color: view===v?"#6366F1":"#475569", fontSize:11, fontWeight:600, textTransform:"capitalize" }}>
+              {v === "table" ? "⊞ Table" : v === "kanban" ? "⊟ Kanban" : "↗ Timeline"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {view === "table" && (
+        <div className="glass" style={{ borderRadius:14, border:"1px solid rgba(255,255,255,0.06)", overflow:"hidden" }}>
+          <div style={{ overflowX:"auto" }}>
+            <table style={{ width:"100%", borderCollapse:"collapse" }}>
+              <thead>
+                <tr style={{ background:"rgba(255,255,255,0.03)", borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
+                  {["Lead","Platform","Niche","Revenue","Status","Probability","Last Contact","Next Follow-Up","Actions"].map(h => (
+                    <th key={h} style={{ padding:"10px 14px", fontSize:10, fontWeight:700, color:"#475569", textAlign:"left", letterSpacing:"0.05em", textTransform:"uppercase", whiteSpace:"nowrap" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((lead, i) => (
+                  <tr key={lead.id} style={{ borderBottom:"1px solid rgba(255,255,255,0.04)", transition:"background 0.2s" }}
+                    onMouseEnter={e => e.currentTarget.style.background="rgba(255,255,255,0.02)"}
+                    onMouseLeave={e => e.currentTarget.style.background="transparent"}>
+                    <td style={{ padding:"12px 14px" }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                        <Avatar initials={lead.avatar} size={30} />
+                        <div>
+                          <div style={{ fontSize:12, fontWeight:600 }}>{lead.name}</div>
+                          <div style={{ fontSize:10, color:"#475569" }}>{lead.company}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ padding:"12px 14px" }}>
+                      <span style={{ fontSize:11, padding:"2px 8px", borderRadius:99, background: lead.platform==="LinkedIn"?"rgba(10,102,194,0.15)":"rgba(228,64,95,0.15)", color: lead.platform==="LinkedIn"?"#5B9FD4":"#E4405F" }}>{lead.platform}</span>
+                    </td>
+                    <td style={{ padding:"12px 14px", fontSize:12, color:"#94A3B8" }}>{lead.niche}</td>
+                    <td style={{ padding:"12px 14px", fontSize:11, color:"#10B981", fontWeight:600 }}>{lead.revenue}</td>
+                    <td style={{ padding:"12px 14px" }}><StatusBadge status={lead.status} /></td>
+                    <td style={{ padding:"12px 14px" }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                        <div style={{ flex:1, width:60 }}><ProgressBar value={lead.probability} height={4} /></div>
+                        <span style={{ fontSize:11, color:"#6366F1", fontWeight:700, whiteSpace:"nowrap" }}>{lead.probability}%</span>
+                      </div>
+                    </td>
+                    <td style={{ padding:"12px 14px", fontSize:11, color:"#475569" }}>{lead.lastContacted}</td>
+                    <td style={{ padding:"12px 14px", fontSize:11, color: lead.nextFollowUp?"#F59E0B":"#475569" }}>{lead.nextFollowUp || "—"}</td>
+                    <td style={{ padding:"12px 14px" }}>
+                      <div style={{ display:"flex", gap:6 }}>
+                        <button className="btn-ghost" style={{ padding:"4px 8px", fontSize:10 }}>View</button>
+                        <button className="btn-primary" style={{ padding:"4px 8px", fontSize:10 }}>DM</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {view === "kanban" && (
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:12 }}>
+          {["hot","warm","cold","closed","ghost"].map(status => (
+            <div key={status} className="kanban-col" style={{ background:"rgba(255,255,255,0.02)", borderRadius:12, padding:"12px", border:"1px solid rgba(255,255,255,0.05)" }}>
+              <div style={{ fontSize:11, fontWeight:700, marginBottom:12, textTransform:"capitalize", display:"flex", justifyContent:"space-between" }}>
+                <span>{status === "hot"?"🔥":status==="warm"?"🌡":status==="cold"?"❄":status==="closed"?"✓":"👻"} {status}</span>
+                <span style={{ color:"#475569" }}>{filtered.filter(l=>l.status===status).length}</span>
+              </div>
+              {filtered.filter(l=>l.status===status).map(lead => (
+                <div key={lead.id} className="card-hover glass" style={{ borderRadius:10, padding:"12px", marginBottom:8, border:"1px solid rgba(255,255,255,0.06)" }}>
+                  <div style={{ display:"flex", gap:8, alignItems:"center", marginBottom:8 }}>
+                    <Avatar initials={lead.avatar} size={28} />
+                    <div>
+                      <div style={{ fontSize:12, fontWeight:600 }}>{lead.name}</div>
+                      <div style={{ fontSize:10, color:"#475569" }}>{lead.niche}</div>
+                    </div>
+                  </div>
+                  <div style={{ fontSize:10, color:"#10B981", marginBottom:6 }}>{lead.revenue}</div>
+                  <ProgressBar value={lead.probability} height={3} />
+                  <div style={{ fontSize:10, color:"#6366F1", marginTop:4 }}>{lead.probability}% close probability</div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {view === "timeline" && (
+        <div className="glass" style={{ borderRadius:14, padding:"20px", border:"1px solid rgba(255,255,255,0.06)" }}>
+          {filtered.map((lead, i) => (
+            <div key={lead.id} style={{ display:"flex", gap:14, paddingBottom: i<filtered.length-1?20:0 }}>
+              <div style={{ display:"flex", flexDirection:"column", alignItems:"center" }}>
+                <Avatar initials={lead.avatar} size={34} />
+                {i < filtered.length-1 && <div style={{ width:1, flex:1, background:"rgba(255,255,255,0.06)", marginTop:6 }} />}
+              </div>
+              <div style={{ flex:1, paddingBottom:i<filtered.length-1?4:0 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:6, flexWrap:"wrap" }}>
+                  <span style={{ fontSize:13, fontWeight:700 }}>{lead.name}</span>
+                  <span style={{ fontSize:11, color:"#475569" }}>{lead.company}</span>
+                  <StatusBadge status={lead.status} />
+                  <span style={{ fontSize:10, color:"#475569", marginLeft:"auto" }}>Last: {lead.lastContacted}</span>
+                </div>
+                <div style={{ fontSize:12, color:"#64748B", marginBottom:4 }}>💡 {lead.notes}</div>
+                <div style={{ display:"flex", gap:12, fontSize:11, color:"#475569", flexWrap:"wrap" }}>
+                  <span>Pain: {lead.painPoints}</span>
+                  <span>·</span>
+                  <span>Offer: {lead.offer}</span>
+                  {lead.nextFollowUp && <><span>·</span><span style={{ color:"#F59E0B" }}>Next: {lead.nextFollowUp}</span></>}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── PROJECTS PAGE ───────────────────────────────────────────────────────────
+
+const ProjectsPage = () => {
+  const [selected, setSelected] = useState(MOCK_PROJECTS[0]);
+
+  const priorityColor = { high:"#EF4444", medium:"#F59E0B", low:"#10B981", none:"#475569" };
+  const statusColor = { active:"#10B981", pending:"#F59E0B", completed:"#6366F1" };
+
+  return (
+    <div>
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20, flexWrap:"wrap", gap:12 }}>
+        <div>
+          <div style={{ fontSize:22, fontWeight:800, marginBottom:4 }}>Projects</div>
+          <div style={{ fontSize:13, color:"#475569" }}>Track deliverables, deadlines, and client status</div>
+        </div>
+        <button className="btn-primary" style={{ display:"flex", alignItems:"center", gap:6 }}>+ New Project</button>
+      </div>
+
+      {/* Summary */}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(150px,1fr))", gap:10, marginBottom:20 }}>
+        {[
+          { label:"Active", value:2, color:"#10B981", icon:"▶" },
+          { label:"Pending", value:1, color:"#F59E0B", icon:"⏸" },
+          { label:"Completed", value:1, color:"#6366F1", icon:"✓" },
+          { label:"Total Revenue", value:"$16.7K", color:"#10B981", icon:"💰" },
+          { label:"Paid", value:"$3.2K", color:"#10B981", icon:"✓" },
+          { label:"Unpaid", value:"$8.7K", color:"#EF4444", icon:"!" },
+        ].map(s => (
+          <div key={s.label} className="glass card-hover" style={{ borderRadius:10, padding:"12px 14px", border:"1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ fontSize:16, marginBottom:6 }}>{s.icon}</div>
+            <div style={{ fontSize:18, fontWeight:800, color:s.color }}>{s.value}</div>
+            <div style={{ fontSize:10, color:"#475569", marginTop:2 }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 340px", gap:14, alignItems:"start" }}>
+        {/* Project Cards */}
+        <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+          {MOCK_PROJECTS.map(p => (
+            <div key={p.id} className={`glass card-hover`} onClick={() => setSelected(p)}
+              style={{ borderRadius:14, padding:"18px 20px", border: selected?.id===p.id?"1px solid rgba(99,102,241,0.4)":"1px solid rgba(255,255,255,0.06)", cursor:"pointer" }}>
+              <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:14, flexWrap:"wrap", gap:8 }}>
+                <div>
+                  <div style={{ fontSize:14, fontWeight:700, marginBottom:3 }}>{p.name}</div>
+                  <div style={{ fontSize:12, color:"#475569" }}>👤 {p.client}</div>
+                </div>
+                <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+                  <span style={{ fontSize:10, fontWeight:700, padding:"3px 8px", borderRadius:99, background:`${priorityColor[p.priority]}20`, color:priorityColor[p.priority] }}>{p.priority.toUpperCase()} PRIORITY</span>
+                  <span style={{ fontSize:10, fontWeight:700, padding:"3px 8px", borderRadius:99, background:`${statusColor[p.status]}20`, color:statusColor[p.status] }}>{p.status.toUpperCase()}</span>
+                </div>
+              </div>
+              <div style={{ marginBottom:10 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", fontSize:11, color:"#475569", marginBottom:6 }}>
+                  <span>Progress</span>
+                  <span style={{ color:"#6366F1", fontWeight:700 }}>{p.progress}%</span>
+                </div>
+                <ProgressBar value={p.progress} color={p.progress===100?"linear-gradient(90deg,#10B981,#059669)":undefined} />
+              </div>
+              <div style={{ display:"flex", gap:16, flexWrap:"wrap" }}>
+                <div style={{ fontSize:11, color:"#475569" }}>📅 Deadline: <span style={{ color:"#F1F5F9" }}>{p.deadline}</span></div>
+                <div style={{ fontSize:11, color:"#475569" }}>⏳ <span style={{ color: p.daysLeft<=7?"#EF4444":p.daysLeft<=14?"#F59E0B":"#10B981", fontWeight:600 }}>{p.daysLeft} days left</span></div>
+                <div style={{ fontSize:11, color:"#475569" }}>💰 <span style={{ color:"#F1F5F9" }}>{p.payment}</span></div>
+                <div style={{ fontSize:11, color:"#475569" }}>🏦 <span style={{ color: p.paymentStatus==="paid"?"#10B981":p.paymentStatus==="partial"?"#F59E0B":"#EF4444" }}>{p.paymentStatus}</span></div>
+              </div>
+              {/* Milestones */}
+              <div style={{ marginTop:12, display:"flex", gap:6, flexWrap:"wrap" }}>
+                {p.milestones.map((m, i) => (
+                  <span key={i} style={{ fontSize:10, padding:"2px 8px", borderRadius:99, background: m.includes("✓")?"rgba(16,185,129,0.12)":"rgba(255,255,255,0.04)", color: m.includes("✓")?"#10B981":"#475569", border: m.includes("✓")?"1px solid rgba(16,185,129,0.2)":"1px solid rgba(255,255,255,0.06)" }}>{m}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Detail Panel */}
+        {selected && (
+          <div className="glass" style={{ borderRadius:14, padding:"18px", border:"1px solid rgba(99,102,241,0.2)", position:"sticky", top:72 }}>
+            <div style={{ fontSize:13, fontWeight:700, marginBottom:14 }}>📋 {selected.name}</div>
+            
+            {/* AI Risk */}
+            <div style={{ padding:"10px 12px", borderRadius:10, marginBottom:14, background: selected.risk==="low"?"rgba(16,185,129,0.08)":selected.risk==="medium"?"rgba(245,158,11,0.08)":"rgba(239,68,68,0.08)", border: `1px solid ${selected.risk==="low"?"rgba(16,185,129,0.2)":selected.risk==="medium"?"rgba(245,158,11,0.2)":"rgba(239,68,68,0.2)"}` }}>
+              <div style={{ fontSize:11, fontWeight:700, color: selected.risk==="low"?"#10B981":selected.risk==="medium"?"#F59E0B":"#EF4444", marginBottom:4 }}>
+                🤖 AI Risk Analysis: {selected.risk==="none"?"N/A":selected.risk.toUpperCase()}
+              </div>
+              <div style={{ fontSize:11, color:"#94A3B8" }}>
+                {selected.risk==="low"?"Project is on track. No bottlenecks detected.":selected.risk==="medium"?"Timeline is tight — consider scoping deliverables down.":"High risk of delay — immediately reprioritize!"}
+              </div>
+            </div>
+
+            {/* Tasks */}
+            <div style={{ fontSize:12, fontWeight:700, marginBottom:10, color:"#94A3B8" }}>TASK CHECKLIST</div>
+            {selected.tasks.length > 0 ? selected.tasks.map((task, i) => (
+              <div key={i} style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 0", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
+                <div style={{ width:16, height:16, borderRadius:4, border:"1px solid rgba(99,102,241,0.4)", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:10, color:"#6366F1" }}>
+                  {i===0||i===1?"✓":""}
+                </div>
+                <span style={{ fontSize:12, color: i<=1?"#10B981":"#94A3B8", textDecoration: i<=1?"line-through":"none" }}>{task}</span>
+              </div>
+            )) : <div style={{ fontSize:12, color:"#475569" }}>✓ All tasks completed!</div>}
+
+            <button className="btn-primary" style={{ width:"100%", padding:"10px", marginTop:16, fontSize:12 }}>View Full Project →</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ─── FOLLOW-UPS PAGE ─────────────────────────────────────────────────────────
+
+const FollowUpsPage = () => {
+  const overdue = MOCK_FOLLOWUPS.filter(f => f.status === "overdue");
+  const upcoming = MOCK_FOLLOWUPS.filter(f => f.status === "upcoming");
+
+  const priorityColor = { high:"#EF4444", medium:"#F59E0B", low:"#10B981" };
+
+  const FollowUpCard = ({ f, isOverdue }) => (
+    <div className="glass card-hover" style={{ borderRadius:12, padding:"14px 16px", border:`1px solid ${isOverdue?"rgba(239,68,68,0.2)":"rgba(255,255,255,0.06)"}`, background: isOverdue?"rgba(239,68,68,0.03)":"rgba(255,255,255,0.02)" }}>
+      <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:8 }}>
+        <div style={{ display:"flex", gap:10, alignItems:"center" }}>
+          <Avatar initials={f.lead.split(" ").map(n=>n[0]).join("")} size={32} />
+          <div>
+            <div style={{ fontSize:13, fontWeight:600 }}>{f.lead}</div>
+            <div style={{ fontSize:11, color:"#475569" }}>{f.platform} · {f.type}</div>
+          </div>
+        </div>
+        <div style={{ textAlign:"right" }}>
+          <span style={{ fontSize:10, fontWeight:700, padding:"2px 8px", borderRadius:99, background:`${priorityColor[f.priority]}15`, color:priorityColor[f.priority] }}>{f.priority.toUpperCase()}</span>
+          <div style={{ fontSize:10, color: isOverdue?"#EF4444":"#F59E0B", marginTop:4, fontWeight:600 }}>{isOverdue?"⚠ OVERDUE":"📅 " + f.date}</div>
+        </div>
+      </div>
+      <div style={{ fontSize:12, color:"#94A3B8", marginBottom:10 }}>📝 {f.message}</div>
+      {f.streak > 0 && (
+        <div style={{ display:"flex", alignItems:"center", gap:4, marginBottom:10 }}>
+          <span className="streak-fire">🔥</span>
+          <span style={{ fontSize:11, color:"#F59E0B", fontWeight:600 }}>{f.streak}-touch streak</span>
+        </div>
+      )}
+      {/* AI suggestion */}
+      <div style={{ padding:"8px 10px", borderRadius:8, background:"rgba(99,102,241,0.08)", border:"1px solid rgba(99,102,241,0.15)", fontSize:11, color:"#8B5CF6", marginBottom:10 }}>
+        ✦ AI: {f.streak >= 2 ? "Switch channels — try voice note or email instead of DM" : f.priority==="high" ? "Send now — optimal engagement window for this lead is 9–11 AM" : "Add value first — share a relevant case study before pitching"}
+      </div>
+      <div style={{ display:"flex", gap:8 }}>
+        <button className="btn-primary" style={{ flex:1, padding:"6px", fontSize:11 }}>✓ Mark Done</button>
+        <button className="btn-ghost" style={{ flex:1, padding:"6px", fontSize:11 }}>⏰ Snooze</button>
+        <button style={{ padding:"6px 10px", borderRadius:8, background:"rgba(99,102,241,0.1)", border:"1px solid rgba(99,102,241,0.2)", color:"#6366F1", fontSize:11 }}>✦ Generate Message</button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div>
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20, flexWrap:"wrap", gap:12 }}>
+        <div>
+          <div style={{ fontSize:22, fontWeight:800, marginBottom:4 }}>Follow-Up Center</div>
+          <div style={{ fontSize:13, color:"#475569" }}>Smart AI-prioritized follow-up queue</div>
+        </div>
+        <div style={{ display:"flex", gap:8 }}>
+          <div style={{ padding:"6px 14px", borderRadius:8, background:"rgba(245,158,11,0.1)", border:"1px solid rgba(245,158,11,0.2)", fontSize:12, color:"#F59E0B", fontWeight:600 }}>
+            🔥 14-Day Follow-Up Streak
+          </div>
+          <button className="btn-primary" style={{ display:"flex", alignItems:"center", gap:6 }}>+ Schedule Follow-Up</button>
+        </div>
+      </div>
+
+      {/* Summary bars */}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))", gap:10, marginBottom:20 }}>
+        {[
+          { label:"Overdue", value:overdue.length, color:"#EF4444", icon:"⚠" },
+          { label:"Due Today", value:2, color:"#F59E0B", icon:"📅" },
+          { label:"Upcoming", value:upcoming.length, color:"#10B981", icon:"⏰" },
+          { label:"Completed This Week", value:9, color:"#6366F1", icon:"✓" },
+          { label:"Current Streak", value:"14 days", color:"#F59E0B", icon:"🔥" },
+        ].map(s => (
+          <div key={s.label} className="glass card-hover" style={{ borderRadius:10, padding:"12px 14px", border:"1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ fontSize:18, marginBottom:6 }}>{s.icon}</div>
+            <div style={{ fontSize:18, fontWeight:800, color:s.color }}>{s.value}</div>
+            <div style={{ fontSize:10, color:"#475569", marginTop:2 }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
+        <div>
+          <div style={{ fontSize:13, fontWeight:700, color:"#EF4444", marginBottom:12, display:"flex", alignItems:"center", gap:8 }}>
+            ⚠ Overdue <span style={{ background:"rgba(239,68,68,0.15)", color:"#EF4444", padding:"1px 8px", borderRadius:99, fontSize:11 }}>{overdue.length}</span>
+          </div>
+          <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+            {overdue.map(f => <FollowUpCard key={f.id} f={f} isOverdue={true} />)}
+          </div>
+        </div>
+        <div>
+          <div style={{ fontSize:13, fontWeight:700, color:"#10B981", marginBottom:12, display:"flex", alignItems:"center", gap:8 }}>
+            ⏰ Upcoming <span style={{ background:"rgba(16,185,129,0.15)", color:"#10B981", padding:"1px 8px", borderRadius:99, fontSize:11 }}>{upcoming.length}</span>
+          </div>
+          <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+            {upcoming.map(f => <FollowUpCard key={f.id} f={f} isOverdue={false} />)}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── REVENUE PAGE ────────────────────────────────────────────────────────────
+
+const RevenuePage = () => {
+  const revChartRef = useRef(); const revChart = useRef();
+  const sourceChartRef = useRef(); const sourceChart = useRef();
+
+  useEffect(() => {
+    if (revChartRef.current) {
+      if (revChart.current) revChart.current.destroy();
+      revChart.current = new Chart(revChartRef.current.getContext("2d"), {
+        type:"line",
+        data:{ labels:["Jan","Feb","Mar","Apr","May","Jun (forecast)"], datasets:[
+          { label:"Revenue", data:[3200,5800,8100,11400,15200,null], borderColor:"#10B981", backgroundColor:"rgba(16,185,129,0.1)", fill:true, tension:0.4, pointRadius:5, pointBackgroundColor:"#10B981" },
+          { label:"Forecast", data:[null,null,null,null,15200,19800], borderColor:"#6366F1", backgroundColor:"rgba(99,102,241,0.05)", fill:true, tension:0.4, borderDash:[6,4], pointRadius:5, pointBackgroundColor:"#6366F1" },
+        ]},
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{labels:{color:"#94A3B8",font:{size:11}}}}, scales:{x:{grid:{color:"rgba(255,255,255,0.04)"},ticks:{color:"#475569"}},y:{grid:{color:"rgba(255,255,255,0.04)"},ticks:{color:"#475569",callback:v=>"$"+v.toLocaleString()}}} }
+      });
+    }
+    if (sourceChartRef.current) {
+      if (sourceChart.current) sourceChart.current.destroy();
+      sourceChart.current = new Chart(sourceChartRef.current.getContext("2d"), {
+        type:"doughnut",
+        data:{ labels:["LinkedIn","Instagram","Referral"], datasets:[{ data:[67,25,8], backgroundColor:["rgba(99,102,241,0.8)","rgba(236,72,153,0.8)","rgba(6,182,212,0.8)"], borderWidth:0, hoverOffset:8 }] },
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:"bottom",labels:{color:"#94A3B8",font:{size:11},padding:16}}} }
+      });
+    }
+    return () => { revChart.current?.destroy(); sourceChart.current?.destroy(); };
+  }, []);
+
+  const transactions = [
+    { client:"Apex Consulting", project:"CRM Automation Suite", amount:"$3,200", date:"2026-05-10", status:"paid" },
+    { client:"CloudStack AI", project:"AI Onboarding System", amount:"$2,400", date:"2026-05-01", status:"paid" },
+    { client:"CloudStack AI", project:"AI Onboarding System", amount:"$2,400", date:"2026-06-15", status:"pending" },
+    { client:"MindsetPro", project:"Content Engine", amount:"$2,200", date:"2026-06-30", status:"invoiced" },
+    { client:"Growth Lab Agency", project:"AI Agency OS", amount:"$6,500", date:"2026-07-10", status:"pending" },
+  ];
+
+  return (
+    <div>
+      <div style={{ marginBottom:20 }}>
+        <div style={{ fontSize:22, fontWeight:800, marginBottom:4 }}>Revenue Intelligence</div>
+        <div style={{ fontSize:13, color:"#475569" }}>Track earnings, forecast growth, and analyze revenue streams</div>
+      </div>
+
+      {/* KPIs */}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))", gap:10, marginBottom:20 }}>
+        {[
+          { label:"MTD Revenue", value:"$15,200", change:"+23%", color:"#10B981" },
+          { label:"June Forecast", value:"$19,800", change:"+30%", color:"#6366F1" },
+          { label:"Total Pipeline", value:"$16,700", change:"", color:"#8B5CF6" },
+          { label:"Avg Project Value", value:"$4,175", change:"+15%", color:"#06B6D4" },
+          { label:"Unpaid Invoices", value:"$8,700", change:"", color:"#F59E0B" },
+          { label:"Collected", value:"$5,600", change:"", color:"#10B981" },
+        ].map(s => (
+          <div key={s.label} className="glass card-hover" style={{ borderRadius:12, padding:"14px 16px", border:"1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ fontSize:20, fontWeight:800, color:s.color }}>{s.value}</div>
+            <div style={{ fontSize:10, color:"#475569", marginTop:4 }}>{s.label}</div>
+            {s.change && <div style={{ fontSize:11, color:"#10B981", marginTop:4, fontWeight:600 }}>{s.change} vs last month</div>}
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:14, marginBottom:16 }}>
+        <div className="glass" style={{ borderRadius:14, padding:"18px 20px", border:"1px solid rgba(255,255,255,0.06)" }}>
+          <div style={{ fontSize:14, fontWeight:700, marginBottom:14 }}>Revenue & Forecast</div>
+          <div style={{ height:220 }}><canvas ref={revChartRef} /></div>
+        </div>
+        <div className="glass" style={{ borderRadius:14, padding:"18px 20px", border:"1px solid rgba(255,255,255,0.06)" }}>
+          <div style={{ fontSize:14, fontWeight:700, marginBottom:14 }}>Revenue by Source</div>
+          <div style={{ height:220 }}><canvas ref={sourceChartRef} /></div>
+        </div>
+      </div>
+
+      {/* Transactions */}
+      <div className="glass" style={{ borderRadius:14, border:"1px solid rgba(255,255,255,0.06)", overflow:"hidden" }}>
+        <div style={{ padding:"14px 20px", borderBottom:"1px solid rgba(255,255,255,0.06)", fontSize:13, fontWeight:700 }}>Transactions & Invoices</div>
+        <table style={{ width:"100%", borderCollapse:"collapse" }}>
+          <thead>
+            <tr style={{ background:"rgba(255,255,255,0.02)" }}>
+              {["Client","Project","Amount","Date","Status"].map(h => (
+                <th key={h} style={{ padding:"10px 20px", fontSize:10, fontWeight:700, color:"#475569", textAlign:"left", letterSpacing:"0.05em", textTransform:"uppercase" }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {transactions.map((t, i) => (
+              <tr key={i} style={{ borderBottom:"1px solid rgba(255,255,255,0.04)" }}
+                onMouseEnter={e => e.currentTarget.style.background="rgba(255,255,255,0.02)"}
+                onMouseLeave={e => e.currentTarget.style.background="transparent"}>
+                <td style={{ padding:"12px 20px", fontSize:13, fontWeight:600 }}>{t.client}</td>
+                <td style={{ padding:"12px 20px", fontSize:12, color:"#94A3B8" }}>{t.project}</td>
+                <td style={{ padding:"12px 20px", fontSize:13, fontWeight:700, color:"#10B981" }}>{t.amount}</td>
+                <td style={{ padding:"12px 20px", fontSize:12, color:"#475569" }}>{t.date}</td>
+                <td style={{ padding:"12px 20px" }}>
+                  <span style={{ fontSize:11, fontWeight:700, padding:"3px 10px", borderRadius:99, background: t.status==="paid"?"rgba(16,185,129,0.15)":t.status==="invoiced"?"rgba(99,102,241,0.15)":"rgba(245,158,11,0.15)", color: t.status==="paid"?"#10B981":t.status==="invoiced"?"#6366F1":"#F59E0B" }}>
+                    {t.status.toUpperCase()}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+// ─── NOTIFICATIONS PAGE ──────────────────────────────────────────────────────
+
+const NotificationsPage = ({ notifications, setNotifications }) => {
+  const markRead = (id) => setNotifications(prev => prev.map(n => n.id===id?{...n,read:true}:n));
+  const markAll = () => setNotifications(prev => prev.map(n => ({...n,read:true})));
+
+  const typeColors = { hot_lead:"#EF4444", followup:"#F59E0B", revenue:"#10B981", ai:"#6366F1", project:"#8B5CF6", missed:"#EF4444" };
+
+  return (
+    <div>
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20, flexWrap:"wrap", gap:12 }}>
+        <div>
+          <div style={{ fontSize:22, fontWeight:800, marginBottom:4 }}>Notifications</div>
+          <div style={{ fontSize:13, color:"#475569" }}>{notifications.filter(n=>!n.read).length} unread notifications</div>
+        </div>
+        <button className="btn-ghost" onClick={markAll}>✓ Mark All Read</button>
+      </div>
+
+      <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+        {notifications.map(n => (
+          <div key={n.id} className="notification-item glass" onClick={() => markRead(n.id)}
+            style={{ borderRadius:12, padding:"14px 18px", border:`1px solid ${n.read?"rgba(255,255,255,0.05)":typeColors[n.type]+"33"}`, cursor:"pointer", background: n.read?"rgba(255,255,255,0.01)":"rgba(255,255,255,0.03)", display:"flex", alignItems:"center", gap:14 }}>
+            <div style={{ width:40, height:40, borderRadius:12, background:`${typeColors[n.type]}15`, border:`1px solid ${typeColors[n.type]}30`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>
+              {n.icon}
+            </div>
+            <div style={{ flex:1 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:3 }}>
+                <span style={{ fontSize:13, fontWeight:600, color: n.read?"#94A3B8":"#F1F5F9" }}>{n.title}</span>
+                {!n.read && <span style={{ width:6, height:6, borderRadius:"50%", background:typeColors[n.type], flexShrink:0 }} />}
+              </div>
+              <div style={{ fontSize:12, color:"#475569" }}>{n.message}</div>
+            </div>
+            <div style={{ fontSize:11, color:"#334155", whiteSpace:"nowrap" }}>{n.time}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ─── AI AGENT PAGE ───────────────────────────────────────────────────────────
+
+const AIAgentPage = () => {
+  const [messages, setMessages] = useState([
+    { from:"ai", text:"Hello Alex! I'm your NeuroFlow AI Business Advisor. I've analyzed your pipeline, revenue, and outreach data. Ready to help you grow. What would you like to explore today?", time:"Now" }
+  ]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [ceoMode, setCeoMode] = useState(false);
+  const chatEndRef = useRef();
+
+  const quickPrompts = [
+    "Analyze my conversion rate",
+    "Predict my top lead this week",
+    "Generate an outreach script for SaaS founders",
+    "How can I increase revenue to $20K/month?",
+    "What's my biggest sales bottleneck?",
+    "Suggest follow-up timing for hot leads",
+  ];
+
+  const sendMessage = (text) => {
+    const msg = text || input;
+    if (!msg.trim()) return;
+    setMessages(prev => [...prev, { from:"user", text:msg, time:"Now" }]);
+    setInput("");
+    setLoading(true);
+    setTimeout(() => {
+      const response = AI_RESPONSES[Math.floor(Math.random() * AI_RESPONSES.length)];
+      setMessages(prev => [...prev, { from:"ai", text:response, time:"Now" }]);
+      setLoading(false);
+    }, 1200);
+  };
+
+  useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior:"smooth" }); }, [messages, loading]);
+
+  const formatMsg = (text) => {
+    return text.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#A5B4FC">$1</strong>');
+  };
+
+  return (
+    <div>
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20, flexWrap:"wrap", gap:12 }}>
+        <div>
+          <div style={{ fontSize:22, fontWeight:800, marginBottom:4, display:"flex", alignItems:"center", gap:10 }}>
+            <span style={{ fontSize:24 }} className="float">✦</span>
+            AI Business Advisor
+          </div>
+          <div style={{ fontSize:13, color:"#475569" }}>Powered by NeuroFlow Intelligence · Analyzing your live pipeline data</div>
+        </div>
+        <button onClick={() => setCeoMode(!ceoMode)}
+          style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 16px", borderRadius:8, background: ceoMode?"linear-gradient(135deg,#6366F1,#8B5CF6)":"rgba(99,102,241,0.1)", border:"1px solid rgba(99,102,241,0.3)", color: ceoMode?"white":"#6366F1", fontSize:12, fontWeight:700 }}>
+          👑 CEO Mode {ceoMode?"Active":"Off"}
+        </button>
+      </div>
+
+      {/* CEO Mode Dashboard */}
+      {ceoMode && (
+        <div style={{ marginBottom:20 }}>
+          <div style={{ fontSize:13, fontWeight:700, marginBottom:12, color:"#8B5CF6" }}>👑 CEO MODE — Executive Dashboard</div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))", gap:12 }}>
+            {[
+              { title:"Revenue Forecast (June)", value:"$19,800", detail:"Based on current pipeline × probability scores", icon:"📈", color:"#10B981" },
+              { title:"Pipeline Health", value:"72/100", detail:"2 hot leads, 3 warm — focus on conversion this week", icon:"💚", color:"#6366F1" },
+              { title:"Biggest Opportunity", value:"Priya Sharma · $4,800", detail:"78% close probability. Book call immediately!", icon:"🎯", color:"#F59E0B" },
+              { title:"Weakest Sales Stage", value:"Discovery → Proposal", detail:"40% drop-off here. Try video proposals instead of PDFs", icon:"⚠", color:"#EF4444" },
+            ].map(c => (
+              <div key={c.title} className="ceo-card card-hover" style={{ borderRadius:14, padding:"16px 18px" }}>
+                <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:10 }}>
+                  <span style={{ fontSize:20 }}>{c.icon}</span>
+                  <span style={{ fontSize:11, fontWeight:700, color:"#475569", textTransform:"uppercase", letterSpacing:"0.05em" }}>{c.title}</span>
+                </div>
+                <div style={{ fontSize:20, fontWeight:800, color:c.color, marginBottom:6 }}>{c.value}</div>
+                <div style={{ fontSize:11, color:"#64748B", lineHeight:1.5 }}>{c.detail}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 300px", gap:14 }}>
+        {/* Chat Interface */}
+        <div className="glass" style={{ borderRadius:14, border:"1px solid rgba(99,102,241,0.2)", display:"flex", flexDirection:"column", height:560 }}>
+          <div style={{ padding:"14px 18px", borderBottom:"1px solid rgba(255,255,255,0.06)", display:"flex", alignItems:"center", gap:12 }}>
+            <div style={{ width:36, height:36, borderRadius:10, background:"linear-gradient(135deg,#6366F1,#8B5CF6)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, boxShadow:"0 0 15px rgba(99,102,241,0.4)" }}>✦</div>
+            <div>
+              <div style={{ fontSize:13, fontWeight:700 }}>NeuroFlow AI</div>
+              <div style={{ fontSize:11, color:"#10B981", display:"flex", alignItems:"center", gap:4 }}>
+                <span className="pulse-dot" style={{ width:6, height:6, borderRadius:"50%", background:"#10B981", display:"inline-block" }} />
+                Live · Analyzing your pipeline
+              </div>
+            </div>
+          </div>
+
+          <div style={{ flex:1, overflowY:"auto", padding:"16px 18px", display:"flex", flexDirection:"column", gap:12 }}>
+            {messages.map((msg, i) => (
+              <div key={i} className="ai-message" style={{ display:"flex", justifyContent: msg.from==="user"?"flex-end":"flex-start", gap:8, alignItems:"flex-start" }}>
+                {msg.from==="ai" && (
+                  <div style={{ width:28, height:28, borderRadius:8, background:"linear-gradient(135deg,#6366F1,#8B5CF6)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, flexShrink:0 }}>✦</div>
+                )}
+                <div style={{ maxWidth:"78%", padding:"12px 14px", borderRadius: msg.from==="user"?"14px 14px 4px 14px":"14px 14px 14px 4px", background: msg.from==="user"?"linear-gradient(135deg,#6366F1,#8B5CF6)":"rgba(255,255,255,0.05)", border: msg.from==="ai"?"1px solid rgba(255,255,255,0.08)":"none", fontSize:12, lineHeight:1.7, color:"#F1F5F9" }}>
+                  <div dangerouslySetInnerHTML={{ __html: formatMsg(msg.text) }} />
+                </div>
+              </div>
+            ))}
+            {loading && (
+              <div style={{ display:"flex", gap:8, alignItems:"flex-start" }}>
+                <div style={{ width:28, height:28, borderRadius:8, background:"linear-gradient(135deg,#6366F1,#8B5CF6)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, flexShrink:0 }}>✦</div>
+                <div style={{ padding:"12px 16px", borderRadius:"14px 14px 14px 4px", background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.08)" }}>
+                  <div style={{ display:"flex", gap:4 }}>
+                    {[0,1,2].map(i => (
+                      <div key={i} style={{ width:6, height:6, borderRadius:"50%", background:"#6366F1", animation:`pulse ${0.4+i*0.2}s ease-in-out infinite alternate` }} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={chatEndRef} />
+          </div>
+
+          {/* Quick prompts */}
+          <div style={{ padding:"8px 16px", borderTop:"1px solid rgba(255,255,255,0.05)", display:"flex", gap:6, overflowX:"auto" }}>
+            {quickPrompts.map(p => (
+              <button key={p} onClick={() => sendMessage(p)}
+                style={{ padding:"4px 10px", borderRadius:99, background:"rgba(99,102,241,0.08)", border:"1px solid rgba(99,102,241,0.2)", color:"#8B5CF6", fontSize:10, fontWeight:500, whiteSpace:"nowrap", flexShrink:0 }}>
+                {p}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ padding:"12px 16px", borderTop:"1px solid rgba(255,255,255,0.06)", display:"flex", gap:8 }}>
+            <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&sendMessage()} placeholder="Ask your AI advisor anything about your business..." style={{ flex:1 }} />
+            <button onClick={() => sendMessage()} className="btn-primary" style={{ padding:"0 16px", fontSize:13 }}>Send ↑</button>
+          </div>
+        </div>
+
+        {/* Insights Panel */}
+        <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+          <div className="glass" style={{ borderRadius:14, padding:"16px", border:"1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ fontSize:12, fontWeight:700, marginBottom:12, color:"#94A3B8" }}>📊 DAILY GROWTH RECS</div>
+            {[
+              { text:"DM 5 SaaS founders on LinkedIn", done:true },
+              { text:"Follow up with Priya Sharma", done:true },
+              { text:"Post AI automation case study", done:false },
+              { text:"Send Kevin Park voice note", done:false },
+              { text:"Update project milestones", done:false },
+            ].map((item, i) => (
+              <div key={i} style={{ display:"flex", gap:8, alignItems:"center", padding:"7px 0", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
+                <div style={{ width:14, height:14, borderRadius:4, background: item.done?"linear-gradient(135deg,#6366F1,#8B5CF6)":"transparent", border: item.done?"none":"1px solid rgba(255,255,255,0.15)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:8, color:"white", flexShrink:0 }}>{item.done?"✓":""}</div>
+                <span style={{ fontSize:11, color: item.done?"#475569":"#94A3B8", textDecoration: item.done?"line-through":"none" }}>{item.text}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="glass" style={{ borderRadius:14, padding:"16px", border:"1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ fontSize:12, fontWeight:700, marginBottom:12, color:"#94A3B8" }}>🚨 OPPORTUNITY ALERTS</div>
+            {[
+              { text:"Priya viewed your profile 3x today", color:"#EF4444", icon:"🔥" },
+              { text:"SaaS founder niche is spiking on LI", color:"#6366F1", icon:"📈" },
+              { text:"Alex Morgan hasn't heard from you in 2 days", color:"#F59E0B", icon:"⏰" },
+            ].map((a, i) => (
+              <div key={i} style={{ display:"flex", gap:8, padding:"8px 10px", borderRadius:8, background:`${a.color}08`, border:`1px solid ${a.color}20`, marginBottom:6 }}>
+                <span>{a.icon}</span>
+                <span style={{ fontSize:11, color:"#94A3B8" }}>{a.text}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="glass" style={{ borderRadius:14, padding:"16px", border:"1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ fontSize:12, fontWeight:700, marginBottom:12, color:"#94A3B8" }}>📅 WEEKLY REPORT</div>
+            {[
+              { label:"Outreach Score", value:"94/100", color:"#10B981" },
+              { label:"Pipeline Growth", value:"+22%", color:"#6366F1" },
+              { label:"Revenue Velocity", value:"↑ Fast", color:"#10B981" },
+              { label:"Bottleneck Risk", value:"Low", color:"#10B981" },
+            ].map(r => (
+              <div key={r.label} style={{ display:"flex", justifyContent:"space-between", padding:"6px 0", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
+                <span style={{ fontSize:11, color:"#475569" }}>{r.label}</span>
+                <span style={{ fontSize:11, fontWeight:700, color:r.color }}>{r.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── SETTINGS PAGE ───────────────────────────────────────────────────────────
+
+const SettingsPage = ({ darkMode, setDarkMode }) => {
+  const [tab, setTab] = useState("profile");
+  const tabs = ["profile","integrations","notifications","ai","billing"];
+
+  return (
+    <div>
+      <div style={{ marginBottom:20 }}>
+        <div style={{ fontSize:22, fontWeight:800, marginBottom:4 }}>Settings</div>
+        <div style={{ fontSize:13, color:"#475569" }}>Manage your NeuroFlow CRM preferences</div>
+      </div>
+
+      <div style={{ display:"flex", gap:0, marginBottom:20, borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
+        {tabs.map(t => (
+          <button key={t} onClick={() => setTab(t)}
+            style={{ padding:"8px 16px", fontSize:12, fontWeight:600, background:"none", border:"none", color: tab===t?"#6366F1":"#475569", borderBottom: tab===t?"2px solid #6366F1":"2px solid transparent", marginBottom:-1, textTransform:"capitalize" }}>
+            {t}
+          </button>
+        ))}
+      </div>
+
+      {tab === "profile" && (
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14, maxWidth:700 }}>
+          <div className="glass" style={{ borderRadius:14, padding:"20px", border:"1px solid rgba(255,255,255,0.06)", gridColumn:"1/-1" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:20 }}>
+              <div style={{ width:64, height:64, borderRadius:"50%", background:"linear-gradient(135deg,#6366F1,#EC4899)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, fontWeight:700, color:"white" }}>A</div>
+              <div>
+                <div style={{ fontSize:16, fontWeight:700 }}>Alex Kumar</div>
+                <div style={{ fontSize:12, color:"#10B981" }}>AI Automation Freelancer</div>
+                <button style={{ fontSize:11, color:"#6366F1", background:"none", border:"none", marginTop:4, cursor:"pointer" }}>Change Photo</button>
+              </div>
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+              {[
+                { label:"Full Name", value:"Alex Kumar" },
+                { label:"Email", value:"alex@neuroflow.ai" },
+                { label:"Niche", value:"AI Automation & Systems" },
+                { label:"Location", value:"Remote" },
+              ].map(f => (
+                <div key={f.label}>
+                  <label style={{ fontSize:11, color:"#475569", fontWeight:600, display:"block", marginBottom:6 }}>{f.label}</label>
+                  <input defaultValue={f.value} />
+                </div>
+              ))}
+            </div>
+            <button className="btn-primary" style={{ marginTop:16 }}>Save Changes</button>
+          </div>
+
+          <div className="glass" style={{ borderRadius:14, padding:"20px", border:"1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ fontSize:13, fontWeight:700, marginBottom:16 }}>Appearance</div>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
+              <div>
+                <div style={{ fontSize:12, fontWeight:600 }}>Dark Mode</div>
+                <div style={{ fontSize:11, color:"#475569" }}>Premium dark UI theme</div>
+              </div>
+              <div onClick={() => setDarkMode(!darkMode)} style={{ width:44, height:24, borderRadius:99, background: darkMode?"linear-gradient(135deg,#6366F1,#8B5CF6)":"rgba(255,255,255,0.1)", cursor:"pointer", position:"relative", transition:"all 0.3s" }}>
+                <div style={{ position:"absolute", top:2, left: darkMode?22:2, width:20, height:20, borderRadius:"50%", background:"white", transition:"left 0.3s", boxShadow:"0 2px 8px rgba(0,0,0,0.3)" }} />
+              </div>
+            </div>
+            {[
+              { label:"Compact Mode", desc:"Denser layout" },
+              { label:"Animations", desc:"Smooth micro-interactions" },
+              { label:"Sound Effects", desc:"Subtle UI sounds" },
+            ].map(s => (
+              <div key={s.label} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
+                <div>
+                  <div style={{ fontSize:12, fontWeight:600 }}>{s.label}</div>
+                  <div style={{ fontSize:11, color:"#475569" }}>{s.desc}</div>
+                </div>
+                <div style={{ width:44, height:24, borderRadius:99, background:"linear-gradient(135deg,#6366F1,#8B5CF6)", cursor:"pointer", position:"relative" }}>
+                  <div style={{ position:"absolute", top:2, right:2, width:20, height:20, borderRadius:"50%", background:"white" }} />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="glass" style={{ borderRadius:14, padding:"20px", border:"1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ fontSize:13, fontWeight:700, marginBottom:16 }}>Achievements 🏅</div>
+            <div style={{ display:"flex", flexWrap:"wrap", gap:10 }}>
+              {[
+                { icon:"🔥", label:"14-Day Streak", color:"#F59E0B" },
+                { icon:"💰", label:"$10K Month", color:"#10B981" },
+                { icon:"🎯", label:"First Client", color:"#6366F1" },
+                { icon:"⚡", label:"Power User", color:"#8B5CF6" },
+                { icon:"🤖", label:"AI Master", color:"#06B6D4" },
+                { icon:"📈", label:"Growth Hacker", color:"#EC4899" },
+              ].map(b => (
+                <div key={b.label} className="achievement-badge" style={{ textAlign:"center", padding:"10px 12px", borderRadius:12, background:`${b.color}10`, border:`1px solid ${b.color}30`, cursor:"pointer", minWidth:80 }}>
+                  <div style={{ fontSize:24, marginBottom:4 }}>{b.icon}</div>
+                  <div style={{ fontSize:9, fontWeight:700, color:b.color }}>{b.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {tab === "integrations" && (
+        <div style={{ maxWidth:600, display:"flex", flexDirection:"column", gap:10 }}>
+          {[
+            { name:"LinkedIn", icon:"🔗", status:"connected", color:"#0A66C2" },
+            { name:"Instagram", icon:"📱", status:"connected", color:"#E4405F" },
+            { name:"Google Calendar", icon:"📅", status:"disconnected", color:"#4285F4" },
+            { name:"Notion", icon:"◈", status:"disconnected", color:"#FFFFFF" },
+            { name:"Slack", icon:"#", status:"disconnected", color:"#4A154B" },
+            { name:"Stripe", icon:"💳", status:"disconnected", color:"#635BFF" },
+          ].map(i => (
+            <div key={i.name} className="glass card-hover" style={{ borderRadius:12, padding:"16px 18px", border:"1px solid rgba(255,255,255,0.06)", display:"flex", alignItems:"center", gap:14 }}>
+              <div style={{ width:40, height:40, borderRadius:10, background:`${i.color}20`, border:`1px solid ${i.color}30`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18 }}>{i.icon}</div>
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:13, fontWeight:600 }}>{i.name}</div>
+                <div style={{ fontSize:11, color: i.status==="connected"?"#10B981":"#475569" }}>{i.status === "connected" ? "● Connected" : "○ Not connected"}</div>
+              </div>
+              <button style={{ padding:"6px 14px", borderRadius:8, background: i.status==="connected"?"rgba(239,68,68,0.1)":"rgba(99,102,241,0.1)", border:`1px solid ${i.status==="connected"?"rgba(239,68,68,0.2)":"rgba(99,102,241,0.2)"}`, color: i.status==="connected"?"#EF4444":"#6366F1", fontSize:11, fontWeight:600 }}>
+                {i.status === "connected" ? "Disconnect" : "Connect"}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {tab !== "profile" && tab !== "integrations" && (
+        <div className="glass" style={{ borderRadius:14, padding:"40px", border:"1px solid rgba(255,255,255,0.06)", textAlign:"center", maxWidth:500 }}>
+          <div style={{ fontSize:48, marginBottom:16 }}>🚧</div>
+          <div style={{ fontSize:16, fontWeight:700, marginBottom:8 }}>{tab.charAt(0).toUpperCase()+tab.slice(1)} Settings</div>
+          <div style={{ fontSize:13, color:"#475569" }}>This section is coming soon in the next version of NeuroFlow CRM.</div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── MAIN APP ────────────────────────────────────────────────────────────────
+
+const App = () => {
+  const [active, setActive] = useState("dashboard");
+  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [darkMode, setDarkMode] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  const pageTitle = {
+    dashboard: "Dashboard",
+    linkedin: "LinkedIn CRM",
+    instagram: "Instagram CRM",
+    leads: "Leads",
+    projects: "Projects",
+    followups: "Follow Ups",
+    revenue: "Revenue",
+    aiagent: "AI Agent",
+    notifications: "Notifications",
+    settings: "Settings",
+  };
+
+  const renderPage = () => {
+    switch(active) {
+      case "dashboard": return <Dashboard setActive={setActive} />;
+      case "linkedin": return <LinkedInCRM />;
+      case "instagram": return <InstagramCRM />;
+      case "leads": return <LeadsPage />;
+      case "projects": return <ProjectsPage />;
+      case "followups": return <FollowUpsPage />;
+      case "revenue": return <RevenuePage />;
+      case "aiagent": return <AIAgentPage />;
+      case "notifications": return <NotificationsPage notifications={notifications} setNotifications={setNotifications} />;
+      case "settings": return <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} />;
+      default: return <Dashboard setActive={setActive} />;
+    }
+  };
+
+  return (
+    <div style={{ minHeight:"100vh", background:"var(--bg-primary)" }}>
+      {/* Background orbs */}
+      <div className="orb" style={{ width:600, height:600, background:"rgba(99,102,241,0.04)", top:-200, left:-100 }} />
+      <div className="orb" style={{ width:400, height:400, background:"rgba(139,92,246,0.04)", bottom:-100, right:-100 }} />
+
+      <Sidebar active={active} setActive={(p) => { setActive(p); setSidebarOpen(false); }} sidebarOpen={sidebarOpen} />
+      <Navbar setActive={setActive} notifications={notifications} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+      {/* Mobile overlay */}
+      {sidebarOpen && <div onClick={() => setSidebarOpen(false)} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", zIndex:39 }} />}
+
+      {/* Main content */}
+      <div style={{ marginLeft:220, paddingTop:56 }}>
+        <div style={{ padding:"24px 28px", maxWidth:1400 }}>
+          {/* Breadcrumb */}
+          <div style={{ fontSize:11, color:"#334155", marginBottom:16, display:"flex", alignItems:"center", gap:6 }}>
+            <span>NeuroFlow</span><span>›</span><span style={{ color:"#6366F1" }}>{pageTitle[active]}</span>
+          </div>
+          {renderPage()}
+        </div>
+      </div>
+
+      {/* Floating AI Button */}
+      <button onClick={() => setActive("aiagent")}
+        style={{ position:"fixed", bottom:28, right:28, width:52, height:52, borderRadius:"50%", background:"linear-gradient(135deg,#6366F1,#8B5CF6)", border:"none", color:"white", fontSize:22, boxShadow:"0 0 30px rgba(99,102,241,0.5)", zIndex:50, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", transition:"all 0.2s" }}
+        onMouseEnter={e => e.target.style.transform="scale(1.1)"}
+        onMouseLeave={e => e.target.style.transform="scale(1)"}>
+        ✦
+      </button>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .sidebar { transform: translateX(-100%); }
+          div[style*="margin-left: 220px"] { margin-left: 0 !important; }
+          .mobile-menu { display: flex !important; }
+          div[style*="left: 220px"] { left: 0 !important; }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
