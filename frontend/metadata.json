@@ -1,0 +1,6 @@
+{
+  "name": "NeuroFlow CRM",
+  "description": "An AI-powered operating system for freelancers to manage LinkedIn and Instagram outreach, leads, follow-ups, pipelines, and projects.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
