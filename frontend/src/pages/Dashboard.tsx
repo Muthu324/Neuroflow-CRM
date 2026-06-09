@@ -1,4 +1,5 @@
 import React from 'react';
+import { Loader } from '../components/ui/Loader';
 import { StatsCards } from '../components/dashboard/StatsCards';
 import { RevenueChart } from '../components/dashboard/RevenueChart';
 import { ConversionFunnel } from '../components/dashboard/ConversionFunnel';
@@ -8,6 +9,10 @@ import { QuickActions } from '../components/dashboard/QuickActions';
 import { AIRecommendations } from '../components/ai/AIRecommendations';
 import { AIAssistant } from '../components/ai/AIAssistant';
 import { Sparkles, BarChart3, Activity } from 'lucide-react';
+
+if (loading) {
+  return <Loader />; 
+}
 
 export const Dashboard: React.FC = () => {
   return (
