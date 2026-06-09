@@ -1,9 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import { useData } from '../app/dataContext';
 import type { Lead } from '../types';
+import { useState, useEffect } from 'react';
+import apiClient from '../services/apiClient';
 
-const [leads, setLeads] = useState<Lead[]>([]); // Initialize as empty array, NOT null
-const [loading, setLoading] = useState(true);
+export const useLeads = () => {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
+
 
 export function useLeads() {
   const {
