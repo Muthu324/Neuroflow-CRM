@@ -10,9 +10,7 @@ load_dotenv()
 
 # Get database URL from environment
 DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:Muthu324@localhost/neuroflow_prod"
-)
+    "DATABASE_URL")
 # Fail fast if the environment variable is missing (Security Best Practice)
 if not DATABASE_URL:
     logging.critical("DATABASE_URL environment variable is missing. Cannot start application.")
