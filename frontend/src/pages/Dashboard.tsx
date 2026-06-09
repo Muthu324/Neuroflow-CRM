@@ -9,12 +9,22 @@ import { QuickActions } from '../components/dashboard/QuickActions';
 import { AIRecommendations } from '../components/ai/AIRecommendations';
 import { AIAssistant } from '../components/ai/AIAssistant';
 import { Sparkles, BarChart3, Activity } from 'lucide-react';
-
-if (loading) {
-  return <Loader />; 
-}
+import { useLeads } from '../hooks/useLeads'; // Import your custom hook
 
 export const Dashboard: React.FC = () => {
+  // 1. Fetch the loading state from your hook
+  const { loading } = useLeads();
+
+  // 2. Safely return the Loader INSIDE the component
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+
+  // 3. Return the main Dashboard only when loading is false
   return (
     <div className="space-y-8 pb-10">
       {/* Intro Header Section */}
