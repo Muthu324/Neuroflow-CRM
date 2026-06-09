@@ -73,7 +73,7 @@ class TimelineEventResponse(TimelineEventBase):
 
 class LeadBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
-    platform: str = Field(..., regex="^(linkedin|instagram|direct)$")
+    platform: str = Field(..., pattern="^(linkedin|instagram|direct)$")
     status: Optional[str] = "new"
     temperature: Optional[str] = "cold"
     company: Optional[str] = None
