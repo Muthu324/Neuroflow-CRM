@@ -1,13 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useData } from '../app/dataContext';
 import type { Lead } from '../types';
-import { useState, useEffect } from 'react';
-import apiClient from '../services/apiClient';
-
-export const useLeads = () => {
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [loading, setLoading] = useState(true);
-
 
 export function useLeads() {
   const {
@@ -69,9 +62,10 @@ export function useLeads() {
     };
   }, [leads]);
 
+  // Rename isLoading to loading here so your Dashboard.tsx file doesn't break!
   return {
     leads,
-    isLoading,
+    loading: isLoading, 
     error,
     clearError,
     fetchLeads,
