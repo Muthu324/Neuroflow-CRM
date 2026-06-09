@@ -13,6 +13,10 @@ DATABASE_URL = os.getenv(
     "DATABASE_URL",
     "postgresql://postgres:Muthu324@localhost/neuroflow_prod"
 )
+# Fail fast if the environment variable is missing (Security Best Practice)
+if not DATABASE_URL:
+    logging.critical("DATABASE_URL environment variable is missing. Cannot start application.")
+    sys.exit(1)
 
 # Get echo setting for SQL logging (useful in development)
 DATABASE_ECHO = os.getenv("DATABASE_ECHO", "False").lower() == "true"
