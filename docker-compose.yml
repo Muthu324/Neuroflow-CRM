@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # 1. Database Container
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: neuroflow
+      POSTGRES_PASSWORD: securepassword
+      POSTGRES_DB: neuroflow_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. Python Backend Container
+  backend:
+    build: 
+      context: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://neuroflow:securepassword@db:5432/neuroflow_db
+      - SECRET_KEY=local_dev_secret_key_123
+      - ENVIRONMENT=development
+      - CORS_ORIGINS=["http://localhost:5173", "http://localhost:3000"]
+    depends_on:
+      - db
+
+  # 3. React/Vite Frontend Container
+  frontend:
+    build: 
+      context: ./frontend
+    ports:
+      - "5173:5173" # Vite default port
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
