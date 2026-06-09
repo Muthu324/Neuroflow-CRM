@@ -4,17 +4,17 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# COPY ONLY package.json (Ignore the package-lock.json to prevent OS conflicts)
-COPY package.json ./
-
-# Install fresh dependencies for Linux
-RUN npm install
-
-# Copy the rest of the frontend code
+# Copy everything from your Windows machine into the container
 COPY . .
 
-# Expose Vite's default port
-EXPOSE 5173
+# Forcefully delete the Windows modules that cause the Native Binding crash
+RUN rm -rf node_modules package-lock.json
+
+# Install fresh, clean Linux dependencies
+RUN npm install
+
+# Expose Vite's default port (matching your package.json)
+EXPOSE 3000
 
 # Command to run the Vite dev server
 CMD ["npm", "run", "dev", "--", "--host"]
