@@ -1,4 +1,5 @@
 import os
+import logging
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -11,6 +12,12 @@ from app.routes.followups import router as followups_router
 from app.routes.notifications import router as notifications_router
 from app.routes.ai import router as ai_router
 from dotenv import load_dotenv
+
+
+# Configure basic server logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 # Load environment variables
 load_dotenv()
@@ -104,6 +111,10 @@ def root():
 @app.exception_handler(Exception)
 async def general_exception_handler(request, exc):
     """Global exception handler"""
+    
+    # Log the actual error and traceback to your server console so you can debug
+    logger.error(f"Unhandled Server Error on {request.url.path}: {str(exc)}", exc_info=True)
+    
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
@@ -111,7 +122,6 @@ async def general_exception_handler(request, exc):
             "type": type(exc).__name__
         }
     )
-
 
 if __name__ == "__main__":
     import uvicorn
