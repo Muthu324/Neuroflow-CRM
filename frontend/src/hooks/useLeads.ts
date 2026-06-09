@@ -2,6 +2,9 @@ import { useCallback, useMemo } from 'react';
 import { useData } from '../app/dataContext';
 import type { Lead } from '../types';
 
+const [leads, setLeads] = useState<Lead[]>([]); // Initialize as empty array, NOT null
+const [loading, setLoading] = useState(true);
+
 export function useLeads() {
   const {
     leads,
