@@ -4,8 +4,10 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and install dependencies
-COPY package.json package-lock.json ./
+# COPY ONLY package.json (Ignore the package-lock.json to prevent OS conflicts)
+COPY package.json ./
+
+# Install fresh dependencies for Linux
 RUN npm install
 
 # Copy the rest of the frontend code
