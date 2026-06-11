@@ -11,6 +11,9 @@ load_dotenv()
 # Get database URL from environment
 DATABASE_URL = os.getenv(
     "DATABASE_URL")
+# Production check to handle SQLAlchemy v1.4+ / v2.0 postgres driver syntax adjustments
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 # Fail fast if the environment variable is missing (Security Best Practice)
 if not DATABASE_URL:
     logging.critical("DATABASE_URL environment variable is missing. Cannot start application.")
@@ -24,6 +27,7 @@ engine = create_engine(
     DATABASE_URL,
     poolclass=QueuePool,
     pool_size=10,
+    pool_pre_ping=True,
     max_overflow=20,
     echo=DATABASE_ECHO,
     connect_args={
