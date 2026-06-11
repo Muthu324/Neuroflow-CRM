@@ -263,7 +263,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const fetchLeads = async () => {
   const response = await apiClient.get('/api/leads');
   setLeads(response.data);
-};
+}; []);
 
   const clearError = useCallback(() => {
     setError(null);
