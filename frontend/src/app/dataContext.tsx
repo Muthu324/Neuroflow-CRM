@@ -258,17 +258,36 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // INITIALIZATION
   // ========================================================================
 
+ // ========================================================================
+  // INITIALIZATION
+  // ========================================================================
+
   useEffect(() => {
-    // Fetch all data on mount
-    const fetchLeads = async () => {
-  const response = await apiClient.get('/api/leads');
-  setLeads(response.data);
-}; []);
+    const initializeData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        // Execute all of your defined operations concurrently on mount
+        await Promise.all([
+          fetchLeads(),
+          fetchProjects(),
+          fetchFollowUps(),
+          fetchNotifications()
+        ]);
+      } catch (err: any) {
+        console.error('Initialization error:', err);
+        setError('Failed to sync data dashboard on startup.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeData();
+  }, [fetchLeads, fetchProjects, fetchFollowUps, fetchNotifications]);
 
   const clearError = useCallback(() => {
     setError(null);
   }, []);
-
   return (
     <DataContext.Provider value={{
       leads,
