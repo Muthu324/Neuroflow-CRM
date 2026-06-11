@@ -260,19 +260,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     // Fetch all data on mount
-    const initializeData = async () => {
-      if (sessionStorage.getItem('access_token')) {
-        await Promise.all([
-          fetchLeads(),
-          fetchProjects(),
-          fetchFollowUps(),
-          fetchNotifications(),
-        ]);
-      }
-    };
-
-    initializeData();
-  }, [fetchLeads, fetchProjects, fetchFollowUps, fetchNotifications]);
+    const fetchLeads = async () => {
+  const response = await apiClient.get('/api/leads');
+  setLeads(response.data);
+};
 
   const clearError = useCallback(() => {
     setError(null);
